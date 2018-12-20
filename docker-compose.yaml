@@ -1,0 +1,86 @@
+version: "2"
+services:
+  nginx:
+    hostname:       ${NAME}-nginx
+    container_name: ${NAME}-nginx
+    build:
+      context: ./
+      dockerfile: ./docker/nginx/Dockerfile
+      args:
+        - 'NGINX_V=${NGINX_V}'
+    volumes:
+      - ./symfony:/opt/symfony
+      - ./docker/nginx/nginx.conf:/usr/local/nginx/conf/nginx.conf
+      - ./docker/nginx/gzip:/usr/local/nginx/conf/gzip
+      - ./docker/nginx/mime.types:/usr/local/nginx/conf/mime.types
+      - ./docker/nginx/pagespeed:/usr/local/nginx/conf/pagespeed
+    links:
+      - php-fpm
+    dns:
+      - 10.10.0.4
+      - 8.8.8.8
+      - 8.8.4.4
+    ports:
+      - "${NGINX_PORT}:443"
+    networks:
+      - ${NETWORK}
+
+  php-fpm:
+    hostname:       ${NAME}-fpm
+    container_name: ${NAME}-fpm
+    build:
+      context: ./
+      dockerfile: ./docker/php-fpm/Dockerfile
+      args:
+        - 'NAME=${NAME}'
+    volumes:
+        - ./symfony:/opt/symfony
+        - ./docker/php-fpm/ini/exif.ini:/usr/local/etc/php/conf.d/exif.ini
+        - ./docker/php-fpm/ini/iconv.ini:/usr/local/etc/php/conf.d/iconv.ini
+        - ./docker/php-fpm/ini/mbstring.ini:/usr/local/etc/php/conf.d/mbstring.ini
+        - ./docker/php-fpm/ini/session.ini:/usr/local/etc/php/conf.d/session.ini
+        - ./docker/php-fpm/ini/timezone.ini:/usr/local/etc/php/conf.d/timezone.ini
+        - ./docker/php-fpm/ini/various.ini:/usr/local/etc/php/conf.d/various.ini
+        - ./docker/php-fpm/ini/www.conf:/usr/local/etc/php-fpm.d/www.conf
+        - ./docker/php-fpm/ini/www.conf.default:/usr/local/etc/php-fpm.d/www.conf.default
+        - ./docker/php-fpm/ini/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+        - ./docker/php-fpm/ini/zlib.ini:/usr/local/etc/php/conf.d/zlib.ini
+    links:
+      - mysql
+      - redis
+    dns:
+      - 10.10.0.4
+      - 8.8.8.8
+      - 8.8.4.4
+    networks:
+      - ${NETWORK}
+
+  mysql:
+    hostname:       ${NAME}-mysql
+    container_name: ${NAME}-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE:      ${MYSQL_DATABASE}
+      MYSQL_USER:          ${MYSQL_USER}
+      MYSQL_PASSWORD:      ${MYSQL_PASSWORD}
+    build:
+      context: ./
+      dockerfile: ./docker/mysql/Dockerfile
+    volumes:
+      - ./docker/mysql/utf8.cnf:/etc/mysql/conf.d/utf8.cnf
+      - ./docker/mysql/storage:/var/lib/mysql
+    networks:
+      - ${NETWORK}
+
+  redis:
+    hostname:       ${NAME}-redis
+    container_name: ${NAME}-redis
+    build:
+      context: ./
+      dockerfile: ./docker/redis/Dockerfile
+    networks:
+      - ${NETWORK}
+
+networks:
+  irondev:
+    external: true

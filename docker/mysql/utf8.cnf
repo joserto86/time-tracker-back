@@ -1,0 +1,22 @@
+[client]
+default-character-set = utf8mb4
+
+[mysql]
+default-character-set = utf8mb4
+
+[mysqld]
+character-set-server = utf8mb4
+character-set-client-handshake = FALSE
+
+init-connect         = 'SET NAMES utf8mb4'
+collation-server     = utf8mb4_bin
+
+general_log      = 1
+general_log_file = /dev/stdout
+#general_log_file = /var/log/mysql/mysql.log
+
+slow_query_log      = 1
+slow_query_log_file = /dev/stdout
+#slow_query_log_file = /var/log/mysql/mysql-slow.log
+
+# SHOW VARIABLES WHERE Variable_name LIKE '%chara%' OR Variable_name LIKE '%collat%';
