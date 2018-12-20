@@ -4,7 +4,7 @@ Este es un proyecto base para proyectos con Symfony
 
 * [Required](#required)
 * [.env](#env)
-* [php-fpm](#methods)
+* [php-fpm](#php-fpm)
 * [Nginx](#nginx)
 * [MySQL](#mysql)
 * [Redis](#redis)
