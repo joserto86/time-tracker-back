@@ -52,6 +52,7 @@ La versión que se usa es la **7.2** ya que es la que actualmente tiene soporte 
 
 > En los archivos .ini se prepararon las configuraciones que más usamos
 > Se instalan muchas cosas, si hay curiosidad ver el Dockerfile
+> La sessión se guarda en Redis (db 10)
 
 ## Nginx
 
