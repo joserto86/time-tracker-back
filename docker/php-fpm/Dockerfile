@@ -33,6 +33,10 @@ RUN docker-php-ext-install mysqli
 RUN docker-php-ext-install opcache
 RUN docker-php-ext-install zip
 
+## Hay que probar que funciona y hacer lo mismo para LDAP
+#RUN apt install --yes --no-install-suggests --no-install-recommends libldap2-dev libxml2-dev pkg-config libssl-dev zlib1g-dev libc-client-dev libkrb5-dev
+#RUN docker-php-ext-install -j$(nproc) soap
+
 RUN pecl install redis
 RUN docker-php-ext-enable redis
 
