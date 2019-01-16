@@ -38,17 +38,25 @@ RUN docker-php-ext-install zip
 #RUN docker-php-ext-install -j$(nproc) soap
 
 # Imagick
-#RUN apt install -y libmagickwand-dev --no-install-recommends
+#RUN apt install --yes --no-install-suggests --no-install-recommends libmagickwand-dev
 #RUN pecl install imagick
 #RUN docker-php-ext-enable imagick
 
+# MongoDB
+#RUN pecl install mongodb
+#RUN docker-php-ext-enable mongodb
+
+# Redis
 RUN pecl install redis
 RUN docker-php-ext-enable redis
 
+# Xdebug
 RUN pecl install xdebug
 RUN docker-php-ext-enable xdebug
 
-RUN apt clean
+# Limpiar todo
+RUN apt purge --auto-remove -y g++ && apt autoremove && apt clean
+RUN rm -rf /var/lib/apt/lists/*
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
