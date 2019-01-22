@@ -61,7 +61,7 @@ La versión de Nginx se puede definir en el **.env** ya que se instala ua versi�
 
 ## MySQL
 
-La imagen es de 8.0
+La imagen es de 5.7
 
 > En el **utf8.conf** se tiene una configuración global para usar **utf8mb4**
 

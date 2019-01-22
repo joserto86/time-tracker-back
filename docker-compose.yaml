@@ -45,6 +45,7 @@ services:
         - ./docker/php-fpm/ini/www.conf.default:/usr/local/etc/php-fpm.d/www.conf.default
         - ./docker/php-fpm/ini/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
         - ./docker/php-fpm/ini/zlib.ini:/usr/local/etc/php/conf.d/zlib.ini
+        - ./docker/vimrc:/opt/.vimrc
     links:
       - mysql
       - redis
