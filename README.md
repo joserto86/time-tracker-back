@@ -33,6 +33,8 @@ MYSQL_DATABASE=Skeleton
 MYSQL_USER=Skeleton
 MYSQL_PASSWORD=123456
 
+XDEBUG=true
+
 NETWORK=irondev
 ````
 
@@ -43,6 +45,7 @@ NETWORK=irondev
 * **MYSQL_DATABASE** Nombre de la base de datos
 * **MYSQL_USER** Nombre de usaurio
 * **MYSQL_PASSWORD** Password de usuario
+* **XDEBUG** true / false para instalar o no el modulo de XDEBUG
 * **NETWORK** Nombre de la network de docker
 
 
@@ -61,7 +64,17 @@ La versión de Nginx se puede definir en el **.env** ya que se instala ua versi�
 
 ## MySQL
 
-La imagen es de 5.7
+La imagen es de 8.0.14
+
+
+Para que funcione correctamente con el modulo actual de PHP es necesario inicializar MySQL con este parametro **--default-authentication-plugin=mysql_native_password**
+
+````conf
+#/~/my.conf
+[mysqld]
+
+default-authentication-plugin=mysql_native_password
+````
 
 > En el **utf8.conf** se tiene una configuración global para usar **utf8mb4**
 
