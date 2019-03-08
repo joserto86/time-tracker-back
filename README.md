@@ -18,6 +18,10 @@ Este es un proyecto base para proyectos con Symfony
 - docker-compose
 - crear una network de docker
 
+````bash
+docker network create --subnet 10.188.255.0/24 irondev
+````
+
 ## .env
 
 En la raíz del proyecto hay un archivo de configuración .env para el docker-compose.yaml

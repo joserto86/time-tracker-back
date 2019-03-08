@@ -2,11 +2,15 @@ FROM debian:stretch-slim
 
 ARG NGINX_V
 
-RUN apt update && apt -y upgrade
+RUN apt update && apt upgrade --yes
+RUN apt autoremove --yes
+
+RUN apt remove --yes mysql* mariadb*
+RUN apt autoremove --yes
 
 # Install required dependencies
 RUN apt install --yes --no-install-suggests --no-install-recommends \
-    curl unzip wget vim tree ccze
+    curl unzip wget vim tree ccze git gnupg
 
 RUN apt install --yes --no-install-suggests --no-install-recommends \
     openssl libssl-dev sudo apt-utils
@@ -30,7 +34,9 @@ RUN openssl genrsa -out $NGINX_PATH/conf/server.key 1024
 RUN openssl req -new -key $NGINX_PATH/conf/server.key -out $NGINX_PATH/conf/server.csr -subj "/C=ES/ST=Bilbao/L=Bizkaia/O=Example Bilbao/CN=examplebilbao.com"
 RUN openssl x509 -req -days 365 -in $NGINX_PATH/conf/server.csr -signkey $NGINX_PATH/conf/server.key -out $NGINX_PATH/conf/server.crt
 
-RUN apt clean
+# Limpiar todo
+RUN apt autoremove --yes && apt clean
+RUN rm -rf /var/lib/apt/lists/*
 
 # Home
 ENV HOME /opt

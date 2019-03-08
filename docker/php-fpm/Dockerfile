@@ -1,6 +1,8 @@
-FROM php:7.2-fpm
+FROM php:7.3-fpm
 
 ARG XDEBUG=false
+ARG UID=1000
+ARG GID=1000
 
 RUN apt update && apt upgrade --yes
 RUN apt autoremove --yes
@@ -55,9 +57,9 @@ RUN docker-php-ext-install zip
 RUN docker-php-ext-install bcmath
 
 # Imagick
-#RUN apt install --yes --no-install-suggests --no-install-recommends libmagickwand-dev
-#RUN pecl install imagick
-#RUN docker-php-ext-enable imagick
+RUN apt install --yes --no-install-suggests --no-install-recommends libmagickwand-dev
+RUN pecl install imagick
+RUN docker-php-ext-enable imagick
 
 # Redis
 RUN pecl install redis
@@ -85,6 +87,9 @@ RUN if [ "${XDEBUG}" = "true" ] ; then /dev/null ; pecl install xdebug; docker-p
 RUN apt autoremove --yes && apt clean
 RUN rm -rf /var/lib/apt/lists/*
 
+# tzdata
+RUN unlink /etc/localtime; ln -s /usr/share/zoneinfo/UTC /etc/localtime; dpkg-reconfigure -f noninteractive tzdata
+
 # añadir .ini de PHP
 ADD docker/php-fpm/ini/exif.ini /usr/local/etc/php/conf.d/exif.ini
 ADD docker/php-fpm/ini/iconv.ini /usr/local/etc/php/conf.d/iconv.ini
@@ -105,5 +110,14 @@ RUN composer --version
 RUN curl -sS https://get.symfony.com/cli/installer | bash
 RUN export PATH="$HOME/.symfony/bin:$PATH" && mv /root/.symfony/bin/symfony /usr/local/bin/symfony
 
-ENV HOME /opt
+RUN mkdir /home/docker \
+    && groupadd -r docker -g ${GID} \
+    && useradd -u ${UID} -r -g docker -d /home/docker -s /bin/bash -c "Docker user" docker \
+    && echo "docker:docker" | chpasswd \
+    && chown -R docker:docker /home/docker
+
+ADD --chown=docker:docker ./symfony/ /opt/symfony/
+
 WORKDIR /opt/symfony
+
+RUN composer install
