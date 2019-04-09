@@ -8,7 +8,7 @@ Este es un proyecto base para proyectos con Symfony
 * [Nginx](#nginx)
 * [MySQL](#mysql)
 * [Redis](#redis)
-* [Symfony](#symfony)
+* [Symfony](docs/#symfony)
 
 # Required
 
@@ -55,7 +55,7 @@ NETWORK=irondev
 
 ## php-fpm
 
-La versión que se usa es la **7.2** ya que es la que actualmente tiene soporte para todo lo que normalmente se usa.
+La versión que se usa es la **7.3** ya que es la que actualmente tiene soporte para todo lo que normalmente se usa.
 
 > En los archivos .ini se prepararon las configuraciones que más usamos
 > Se instalan muchas cosas, si hay curiosidad ver el Dockerfile
@@ -84,13 +84,4 @@ default-authentication-plugin=mysql_native_password
 
 ## Redis
 
-Imagen sin tocar de Redis 5.0
-
-## Symfony
-
-Al terminar de hacer el **docker-compose up** se entra en el contenedor de php-fpm y se ejecutan los siguientes comandos:
-
-````bash
-cd /opt/symfony
-composer create-project symfony/skeleton .
-````
+Imagen sin tocar de Redis 5.0.4
