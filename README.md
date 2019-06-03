@@ -8,7 +8,7 @@ Este es un proyecto base para proyectos con Symfony
 * [Nginx](#nginx)
 * [MySQL](#mysql)
 * [Redis](#redis)
-* [Symfony](docs/#symfony)
+* [Symfony](docs/README-SYMFONY.md)
 
 # Required
 
