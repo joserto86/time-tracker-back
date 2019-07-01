@@ -1,4 +1,4 @@
-version: "2"
+version: "3.4"
 services:
   nginx:
     hostname:       ${NAME}-nginx
@@ -10,10 +10,6 @@ services:
         - 'NGINX_V=${NGINX_V}'
     volumes:
       - ./symfony:/opt/symfony
-      - ./docker/nginx/nginx.conf:/usr/local/nginx/conf/nginx.conf
-      - ./docker/nginx/gzip:/usr/local/nginx/conf/gzip
-      - ./docker/nginx/mime.types:/usr/local/nginx/conf/mime.types
-      - ./docker/nginx/pagespeed:/usr/local/nginx/conf/pagespeed
     links:
       - php-fpm
     dns:
