@@ -45,9 +45,7 @@ composer require sensio/framework-extra-bundle symfony/swiftmailer-bundle symfon
 
 ## Paquetes para autenticación JWT de usuarios
 
-````bash
-composer require friendsofsymfony/user-bundle jms/serializer lexik/jwt-authentication-bundle
-````
+Continuar en el archivo "README-AUTH-USER.md".
 
 ## Paquetes de multiples funcionalidades de la comunidad
 
