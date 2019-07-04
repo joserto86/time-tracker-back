@@ -1,8 +1,0 @@
-[Unit]
-Description="skeleton timer"
-
-[Timer]
-OnCalendar=*:0/2
-
-[Install]
-WantedBy=timers.target

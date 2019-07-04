@@ -1,0 +1,6 @@
+[Unit]
+Description=Skeleton FPM - Each 20 min
+
+[Service]
+Type=oneshot
+ExecStart=/opt/skeleton/systemd/scripts/skeleton-fpm-command.sh

@@ -1,7 +1,0 @@
-[Unit]
-Description="Execute skeleton"
-After=skeleton-test.timer
-
-[Service]
-Type=oneshot
-ExecStart=/usr/bin/docker exec skeleton-php-fpm bash -c "/usr/local/bin/php -d memory_limit=-1 /opt/symfony/bin/console"
