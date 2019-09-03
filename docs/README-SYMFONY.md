@@ -47,6 +47,12 @@ composer require sensio/framework-extra-bundle symfony/swiftmailer-bundle symfon
 
 Continuar en el archivo "README-AUTH-USER.md".
 
+## Para la gestionar los errores en las respuestas JSON
+
+````bash
+composer require symfony-tools/json-exception-response
+````
+
 ## Paquetes de multiples funcionalidades de la comunidad
 
 ````bash
