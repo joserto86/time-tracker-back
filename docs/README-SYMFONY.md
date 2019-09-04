@@ -50,7 +50,7 @@ Continuar en el archivo "README-AUTH-USER.md".
 ## Para la gestionar los errores en las respuestas JSON
 
 ````bash
-composer require symfony-tools/json-exception-response
+composer require irontec/json-exception-response-bundle
 ````
 
 ## Paquetes de multiples funcionalidades de la comunidad

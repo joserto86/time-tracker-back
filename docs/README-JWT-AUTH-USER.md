@@ -2,6 +2,20 @@
 composer require friendsofsymfony/user-bundle jms/serializer lexik/jwt-authentication-bundle
 ````
 
+## fos_user.yaml
+
+Si no se crea automaticamente, es necesario crear el fichero "**config/packages/fos_user.yaml**" con este contenido:
+
+````yaml
+fos_user:
+    db_driver: orm
+    firewall_name: main
+    user_class: App\Entity\User
+    from_email:
+        address:     '%env(resolve:FOS_USER_EMAIL_ADDRESS)%'
+        sender_name: '%env(resolve:FOS_USER_EMAIL_NAME)%'
+````
+
 ## framework.yaml
 
 En el fichero "**config/packages/framework.yaml**" agregar:
@@ -23,6 +37,10 @@ composer require symfony-tools/request-transformer
 **config/services.yaml**:
 
 ````yaml
+parameters:
+    locale: 'es'
+    locales: ['es', 'en']
+
 services:
     Irontec\SymfonyTools\RequestTransformer\RequestTransformer:
         arguments: ["%locale%", "%locales%"]
@@ -148,4 +166,31 @@ JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem
 JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem
 JWT_PASSPHRASE=4941a405a95829db63d64f6167facbf3
 ###< lexik/jwt-authentication-bundle ###
+````
+
+
+### JWT
+
+Para la autenticación de la API con jwt se necesita crear un certificado de openssl:
+
+https://github.com/lexik/LexikJWTAuthenticationBundle/blob/master/Resources/doc/index.md#installation
+
+Generate the SSH keys :
+````bash
+$ mkdir -p config/jwt # For Symfony3+, no need of the -p option
+$ openssl genrsa -out config/jwt/private.pem -aes256 4096
+$ openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem
+````
+
+In case first openssl command forces you to input password use following to get the private key decrypted
+
+````bash
+$ openssl rsa -in config/jwt/private.pem -out config/jwt/private2.pem
+$ mv config/jwt/private.pem config/jwt/private.pem-back
+$ mv config/jwt/private2.pem config/jwt/private.pem
+````
+
+Validation:
+````
+$ bin/console lexik:jwt:check-config
 ````
