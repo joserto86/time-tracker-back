@@ -10,4 +10,4 @@ ADD --chown=docker:docker ./symfony/ /opt/symfony/
 
 WORKDIR /opt/symfony
 
-#RUN composer install
+RUN [ -f composer.json ] && composer install || echo ''

@@ -1,3 +1,10 @@
+# Instalación
+| Package | Description |
+| - | - |
+| friendsofsymfony/user-bundle | Bundle para ayudar a gestionar campos y funciones de autenticación de los usuarios |
+| jms/serializer | Bundle para gestionar la serialización de JWT |
+| lexik/jwt-authentication-bundle | Bundle para gestionar la autenticación por JWT |
+
 ````bash
 composer require friendsofsymfony/user-bundle jms/serializer lexik/jwt-authentication-bundle
 ````
@@ -23,29 +30,9 @@ En el fichero "**config/packages/framework.yaml**" agregar:
 ````yaml
 framework:
     # ... other stuff ...
-    
+
     templating:
         engines: ['twig', 'php']
-````
-
-## request-transformer
-
-````bash
-composer require symfony-tools/request-transformer
-````
-
-**config/services.yaml**:
-
-````yaml
-parameters:
-    locale: 'es'
-    locales: ['es', 'en']
-
-services:
-    Irontec\SymfonyTools\RequestTransformer\RequestTransformer:
-        arguments: ["%locale%", "%locales%"]
-        tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 100 }
 ````
 
 ## User Entity
@@ -97,7 +84,7 @@ class User extends BaseUser
 Para generar la ruta de login es necesario agregar estas lineas en "**config/routes.yaml**":
 
 ````yaml
-fos_user_security_login: 
+fos_user_security_login:
   path: "/login"
   methods: ["POST"]
   controller: fos_user.security.controller:loginAction
@@ -153,7 +140,7 @@ security:
 
 ## Lexik JWT Authentication
 
-Este bundle genera el token de autenticación. Para su correcto funcionamiento necesita: 
+Este bundle genera el token de autenticación. Para su correcto funcionamiento necesita:
 
 * private.pem
 * public.pem

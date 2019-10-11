@@ -2,6 +2,8 @@
 
 Este es un proyecto base para proyectos con Symfony
 
+> Borrar este README.md y el directorio docs al terminar la instalación
+
 * [Required](#required)
 * [.env](#env)
 * [php-fpm](#php-fpm)
