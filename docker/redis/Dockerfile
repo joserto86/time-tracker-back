@@ -1,4 +1,4 @@
-FROM redis:5.0.6-alpine
+FROM redis:5.0.7-alpine
 
 ADD docker/redis/redis.conf /etc/redis/redis.conf
 ADD docker/redis/health-check.sh /etc/redis/health-check.sh
