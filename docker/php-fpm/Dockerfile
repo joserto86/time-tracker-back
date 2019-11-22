@@ -1,9 +1,11 @@
-FROM hub.irontec.com/internet/dockerfiles/php-fpm/7.3.3:f18965b5b9f781de6dbe1849019abc540e440acd
+FROM hub.irontec.com/internet/dockerfiles/php-fpm/7.3.3:5a29619b85b93b5eb4982f3e4c145fa6024de5bd
+
 ARG XDEBUG=false
 
-USER root
 # Xdebug
-RUN if [ "${XDEBUG}" = "true" ] ; then pecl install xdebug; docker-php-ext-enable xdebug; fi
+USER root
+RUN if [ "${XDEBUG}" = "true" ] ; then /dev/null ; pecl install xdebug; docker-php-ext-enable xdebug; fi
+
 USER docker
 
 ADD --chown=docker:docker ./symfony/ /opt/symfony/

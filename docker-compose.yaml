@@ -42,11 +42,19 @@ services:
       - 8.8.4.4
     networks:
       - ${NETWORK}
+#    environment:
+#      - DOCKER_HEALTHCHECK=/opt/symfony/vendor/bin/simple-phpunit tests/HealthCheckControllerTest.php
+#    healthcheck:
+#      test: ["CMD", "/opt/symfony/vendor/bin/simple-phpunit", "tests/HealthCheckControllerTest.php"]
+#      interval: '5m30s'
+#      timeout: '30s'
+#      retries: 2
 
   mysql:
     hostname:       ${NAME}-mysql
     container_name: ${NAME}-mysql
-    command: --default-authentication-plugin=mysql_native_password
+#https://dev.mysql.com/doc/refman/8.0/en/binary-log.html
+    command: --explicit_defaults_for_timestamp --default-authentication-plugin=mysql_native_password --skip-log-bin --disable-log-bin
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE:      ${MYSQL_DATABASE}

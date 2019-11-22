@@ -20,3 +20,7 @@ slow_query_log_file = /dev/stdout
 #slow_query_log_file = /var/log/mysql/mysql-slow.log
 
 # SHOW VARIABLES WHERE Variable_name LIKE '%chara%' OR Variable_name LIKE '%collat%';
+
+# https://dev.mysql.com/doc/refman/8.0/en/replication-options-binary-log.html#sysvar_max_binlog_size
+max_binlog_size  = 1073741
+expire_logs_days = 2
