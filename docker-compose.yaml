@@ -6,12 +6,8 @@ services:
     build:
       context: ./
       dockerfile: ./docker/nginx/Dockerfile
-      args:
-        - 'NGINX_V=${NGINX_V}'
     volumes:
       - ./symfony:/opt/symfony
-    links:
-      - php-fpm
     dns:
       - 10.10.0.4
       - 8.8.8.8
@@ -33,9 +29,6 @@ services:
     volumes:
         - ./symfony:/opt/symfony
         - /etc/hosts:/etc/hosts
-    links:
-      - mysql
-      - redis
     dns:
       - 10.10.0.4
       - 8.8.8.8
@@ -72,9 +65,7 @@ services:
   redis:
     hostname:       ${NAME}-redis
     container_name: ${NAME}-redis
-    build:
-      context: ./
-      dockerfile: ./docker/redis/Dockerfile
+    image: hub.irontec.com/internet/dockerfiles/redis/5.0.7:0.2.0
     networks:
       - ${NETWORK}
 

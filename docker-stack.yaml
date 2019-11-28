@@ -1,0 +1,11 @@
+version: "3.4"
+services:
+  nginx:
+    image: ${NAME}-nginx:latest
+    ports:
+      - 443
+      - 80
+  php-fpm:
+    image: ${NAME}-fpm:latest
+  redis:
+    image: redis-molon:latest
