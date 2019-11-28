@@ -1,22 +1,5 @@
 version: "3.4"
 services:
-  nginx:
-    hostname:       ${NAME}-nginx
-    container_name: ${NAME}-nginx
-    build:
-      context: ./
-      dockerfile: ./docker/nginx/Dockerfile
-    volumes:
-      - ./symfony:/opt/symfony
-    dns:
-      - 10.10.0.4
-      - 8.8.8.8
-      - 8.8.4.4
-    ports:
-      - "${NGINX_PORT}:443"
-    networks:
-      - ${NETWORK}
-
   php-fpm:
     hostname:       ${NAME}-fpm
     container_name: ${NAME}-fpm
@@ -42,6 +25,23 @@ services:
 #      interval: '5m30s'
 #      timeout: '30s'
 #      retries: 2
+
+  nginx:
+    hostname:       ${NAME}-nginx
+    container_name: ${NAME}-nginx
+    build:
+      context: ./
+      dockerfile: ./docker/nginx/Dockerfile
+    volumes:
+      - ./symfony:/opt/symfony
+    dns:
+      - 10.10.0.4
+      - 8.8.8.8
+      - 8.8.4.4
+    ports:
+      - "${NGINX_PORT}:443"
+    networks:
+      - ${NETWORK}
 
   mysql:
     hostname:       ${NAME}-mysql
