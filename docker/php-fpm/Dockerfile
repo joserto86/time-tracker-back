@@ -10,5 +10,3 @@ USER docker
 ADD --chown=docker:docker ./symfony/ /opt/symfony/
 
 WORKDIR /opt/symfony
-
-RUN [ -f composer.json ] && '' || composer create-project symfony/skeleton .
