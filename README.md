@@ -18,10 +18,19 @@ Este es un proyecto base para proyectos con Symfony
 - git
 - docker
 - docker-compose
-- crear una network de docker
 
-````bash
-docker network create --subnet 10.188.255.0/24 irondev
+
+> Configuración recomendada para las redes
+````json
+// /etc/docker/daemon.json
+{
+  "default-address-pools": [
+    {
+      "base": "10.188.255.0/16",
+      "size": 24
+    }
+  ]
+}
 ````
 
 ## .env
@@ -40,8 +49,6 @@ MYSQL_USER=Skeleton
 MYSQL_PASSWORD=123456
 
 XDEBUG=true
-
-NETWORK=irondev
 ````
 
 * **NAME** Nombre del proyecto (de forma simple sin espacios en blanco o caracteres raros)
@@ -52,8 +59,6 @@ NETWORK=irondev
 * **MYSQL_USER** Nombre de usaurio
 * **MYSQL_PASSWORD** Password de usuario
 * **XDEBUG** true / false para instalar o no el modulo de XDEBUG
-* **NETWORK** Nombre de la network de docker
-
 
 ## php-fpm
 

@@ -1,4 +1,4 @@
-version: "3.4"
+version: "3.7"
 services:
   php-fpm:
     hostname:       ${NAME}-fpm
@@ -12,12 +12,13 @@ services:
     volumes:
         - ./symfony:/opt/symfony
         - /etc/hosts:/etc/hosts
+    depends_on:
+      - mysql
+      - redis
     dns:
       - 10.10.0.4
       - 8.8.8.8
       - 8.8.4.4
-    networks:
-      - ${NETWORK}
 #    environment:
 #      - DOCKER_HEALTHCHECK=/opt/symfony/vendor/bin/simple-phpunit tests/HealthCheckControllerTest.php
 #    healthcheck:
@@ -34,14 +35,16 @@ services:
       dockerfile: ./docker/nginx/Dockerfile
     volumes:
       - ./symfony:/opt/symfony
+    depends_on:
+      - php-fpm
     dns:
       - 10.10.0.4
       - 8.8.8.8
       - 8.8.4.4
+    depends_on:
+      - php-fpm
     ports:
       - "${NGINX_PORT}:443"
-    networks:
-      - ${NETWORK}
 
   mysql:
     hostname:       ${NAME}-mysql
@@ -59,16 +62,9 @@ services:
     volumes:
       - ./docker/mysql/utf8.cnf:/etc/mysql/conf.d/utf8.cnf
       - ./docker/mysql/storage:/var/lib/mysql
-    networks:
-      - ${NETWORK}
 
   redis:
     hostname:       ${NAME}-redis
     container_name: ${NAME}-redis
     image: hub.irontec.com/internet/dockerfiles/redis/5.0.7:0.2.0
-    networks:
-      - ${NETWORK}
 
-networks:
-  irondev:
-    external: true
