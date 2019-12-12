@@ -1,9 +1,9 @@
-FROM hub.irontec.com/internet/dockerfiles/php-fpm/7.3.3:51d9d55f895124ab17572bca13af5d8850bf0940
+FROM hub.irontec.com/internet/dockerfiles/php-fpm/7.4.0:ba6f3c5a036fceb1d1632a2fac3648a2f8829ea1
 
 # Xdebug
 ARG XDEBUG=false
 USER root
-RUN if [ "${XDEBUG}" = "true" ] ; then /dev/null ; pecl install xdebug; docker-php-ext-enable xdebug; fi
+RUN if [ "${XDEBUG}" = "true" ] ; then pecl install xdebug; docker-php-ext-enable xdebug; mv /usr/local/etc/php/conf.d/xdebug.disabled /usr/local/etc/php/conf.d/xdebug.ini; mv /usr/local/etc/php/conf.d/opcache.ini /usr/local/etc/php/conf.d/opcache.disable; fi
 
 USER docker
 
