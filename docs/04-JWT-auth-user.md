@@ -152,8 +152,16 @@ Se configuran las rutas en el .env del proyecto o en variables de entorno:
 JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem
 JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem
 JWT_PASSPHRASE=4941a405a95829db63d64f6167facbf3
+JWT_TOKENTTL=900 # 15 Minutos
+JWT_REFRESHTTL=7889400 # 3 Meses
 ###< lexik/jwt-authentication-bundle ###
 ````
+
+También hay que añadir esta linea al config/services.yaml en la sección de *parameters* para que el login controller recoga el valor de ttl
+````bash
+jwt_refresh_ttl: '%env(int:JWT_REFRESHTTL)%'
+````
+
 
 
 ### JWT
