@@ -63,5 +63,8 @@ services:
     ports:
     - 30033:80
 
+  redis:
+    image: hub.irontec.com/internet/dockerfiles/redis/5.0.7:0.2.1
+
 networks:
   {{STACK_NAME}}:
