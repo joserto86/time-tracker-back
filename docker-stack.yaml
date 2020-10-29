@@ -24,7 +24,7 @@ x-envs: &envs
   - JWT_REFRESHTTL=7889400 # 3 Meses
   - REDIS_URL=redis://redis
   - DATABASE_URL=mysql://{{DATABASE_USER}}:{{DATABASE_PASSWORD}}@10.177.119.253:3357/{{DATABASE_NAME}}?serverVersion=5.7
-  - SYMFONY_TOOLS_CORS='["https://{{FRONTEND_DOMAIN}}"]'
+  - SYMFONY_TOOLS_CORS=["https://{{FRONTEND_DOMAIN}}"]
   - MAILER_URL=smtp://10.177.119.145:26
   - RESTORE_PASSWORD_SUBJECT="Recuperación de contraseña"
   - RESTORE_PASSWORD_FROM_NAME="From Name"
@@ -65,6 +65,8 @@ services:
 
   redis:
     image: hub.irontec.com/internet/dockerfiles/redis/5.0.7:0.2.1
+    networks:
+      {{STACK_NAME}}:
 
 networks:
   {{STACK_NAME}}:
