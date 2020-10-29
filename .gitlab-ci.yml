@@ -1,0 +1,14 @@
+variables:
+  REGISTRY_HOST: hub.irontec.com
+
+stages:
+  - quality
+  - build
+  - deploy stage
+  - deploy pre
+  - deploy prod
+
+include:
+  - /gitlab-ci/sonar-scanner.yml
+  - /gitlab-ci/build.yml
+  - /gitlab-ci/distribute.yml
