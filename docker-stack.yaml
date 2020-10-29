@@ -65,6 +65,8 @@ services:
 
   redis:
     image: hub.irontec.com/internet/dockerfiles/redis/5.0.7:0.2.1
+    networks:
+      {{STACK_NAME}}:
 
 networks:
   {{STACK_NAME}}:
