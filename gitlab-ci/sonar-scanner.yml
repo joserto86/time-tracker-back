@@ -1,0 +1,11 @@
+SonarScanner:
+ image: hub.irontec.com/internet/dockerfiles/sonar-scanner/3.2:latest
+ tags:
+  - docker
+  - runners
+ stage: quality
+ script:
+  - sonar-scanner
+ only: 
+ - tags
+ allow_failure: true
