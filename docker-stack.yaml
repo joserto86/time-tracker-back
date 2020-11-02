@@ -31,8 +31,8 @@ x-envs: &envs
   - RESTORE_PASSWORD_FROM_EMAIL="example@example.com"
   - RESTORE_PASSWORD_INTERVAL=5
   - RESTORE_PASSWORD_URL="https://{{FRONTEND_DOMAIN}}}/#/restore/"
-  - STORAGE_FILES_TMP="%kernel.project_dir%/storage-tmp/"
-  - STORAGE_FILES="%kernel.project_dir%/storage/"
+  - STORAGE_FILES_TMP=%kernel.project_dir%/storage-tmp/
+  - STORAGE_FILES=%kernel.project_dir%/storage/
 services:
   backend-php-fpm:
     image: {{GITLAB_REGISTRY}}/php-fpm:stage
