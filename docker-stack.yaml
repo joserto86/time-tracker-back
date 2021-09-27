@@ -53,7 +53,7 @@ services:
     networks:
       {{STACK_NAME}}:
     ports:
-    - 30034:80
+    - 80
 
   frontend:
     image: {{GITLAB_REGISTRY}}/web/stage:stage
@@ -61,7 +61,7 @@ services:
     networks:
       {{STACK_NAME}}:
     ports:
-    - 30033:80
+    - 80
 
   redis:
     image: hub.irontec.com/internet/dockerfiles/redis/5.0.7:0.2.1
