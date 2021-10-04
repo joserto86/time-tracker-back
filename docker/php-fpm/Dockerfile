@@ -23,4 +23,5 @@ ADD --chown=docker:docker ./symfony/ /opt/symfony/
 
 WORKDIR /opt/symfony
 
-RUN composer install --no-scripts
+RUN composer install --no-scripts && \
+    php bin/console assets:install
