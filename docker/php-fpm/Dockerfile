@@ -1,4 +1,4 @@
-FROM hub.irontec.com/internet/dockerfiles/php-fpm/7.4:14cd65a1117d4f38cefe617422da7a4bf94a0ee9
+FROM hub.irontec.com/internet/symfony/php-fpm-8/8.1
 
 # Xdebug
 ARG XDEBUG=false
@@ -13,8 +13,8 @@ RUN if [ "${XDEBUG}" = "true" ] ; then mv /usr/local/etc/php/conf.d/opcache.dev 
 
 # symfony-cli
 RUN wget https://get.symfony.com/cli/installer -O - | bash && \
-    export PATH="$HOME/.symfony/bin:$PATH" && \
-    mv /root/.symfony/bin/symfony /usr/local/bin/symfony
+    export PATH="$HOME/.symfony5/bin:$PATH" && \
+    mv /root/.symfony5/bin/symfony /usr/local/bin/symfony
 
 # Image
 USER docker
