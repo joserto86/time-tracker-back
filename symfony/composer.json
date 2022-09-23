@@ -10,6 +10,8 @@
         "doctrine/doctrine-bundle": "^2.7",
         "doctrine/orm": "^2.13",
         "sensio/framework-extra-bundle": "^6.2",
+        "symfony-tools/get-entities": "^1.0",
+        "symfony-tools/request-transformer": "^1.0",
         "symfony/console": "6.1.*",
         "symfony/dotenv": "6.1.*",
         "symfony/flex": "^2",
@@ -71,5 +73,11 @@
     },
     "require-dev": {
         "symfony/maker-bundle": "^1.45"
-    }
+    },
+    "repositories": [
+        {
+            "type" : "composer",
+            "url" : "https://git.irontec.com/composer"
+        }
+    ]
 }
