@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\GlIssueRepository;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Types;
@@ -20,6 +23,17 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'title', columns: ['title'])]
 #[ORM\Index(name: 'projectiid', columns: ['gl_project_id'])]
 #[ORM\Index(name: 'idd', columns: ['gl_iid'])]
+
+#[ApiResource(operations: [
+    new Get(
+        uriTemplate: '/issue/{id}',
+        requirements: ['id' => '\d+'],
+    ),
+    new GetCollection(
+        name: 'list',
+        routeName: 'issue-list'
+    )
+])]
 class GlIssue
 {
     #[ORM\Id]
