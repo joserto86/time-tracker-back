@@ -7,6 +7,12 @@ RUN if [ "${XDEBUG}" = "true" ] ; then pecl install xdebug; docker-php-ext-enabl
 
 ADD docker/php-fpm/opcache.ini /usr/local/etc/php/conf.d/opcache.dev
 
+#LDAP
+RUN apt update \
+    && apt install libldap2-dev -y \
+    && docker-php-ext-install ldap \
+    && docker-php-ext-enable  ldap
+
 # Opcache
 RUN if [ "${XDEBUG}" = "true" ] ; then mv /usr/local/etc/php/conf.d/opcache.ini /usr/local/etc/php/conf.d/opcache.disable; fi
 RUN if [ "${XDEBUG}" = "true" ] ; then mv /usr/local/etc/php/conf.d/opcache.dev /usr/local/etc/php/conf.d/opcache.ini; fi
