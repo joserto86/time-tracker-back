@@ -14,7 +14,12 @@ class GlTimeNoteController extends AbstractTimeTrackerController
     #[Route(name: 'list', methods: ['GET'])]
     public function index(Request $request): JsonResponse
     {
-        $users = $this->filtrateAndPaginate($request, GlTimeNote::class);
-        return $this->json($users['items'], Response::HTTP_OK, ['X-Total-Items' => $users['count']]);
+        $result = $this->filtrateAndPaginate($request, GlTimeNote::class);
+
+        if ($result['count'] === 0) {
+            return $this->json([], Response::HTTP_NO_CONTENT);
+        }
+
+        return $this->json($result['items'], Response::HTTP_OK, ['X-Total-Items' => $result['count']]);
     }
 }

@@ -32,6 +32,10 @@ use Doctrine\ORM\Mapping as ORM;
     new GetCollection(
         name: 'list',
         routeName: 'issue-list'
+    ),
+    new GetCollection(
+        name: 'time-note-list',
+        routeName: 'issue-time-note-list'
     )
 ])]
 class GlIssue

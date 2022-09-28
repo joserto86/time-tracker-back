@@ -23,6 +23,11 @@ use Doctrine\ORM\Mapping as ORM;
     new GetCollection(
         name: 'list',
         routeName: 'user-list'
+    ),
+    new GetCollection(
+        name: 'project-list',
+        routeName: 'user-project-list',
+        read: 'id'
     )
 ])]
 class User

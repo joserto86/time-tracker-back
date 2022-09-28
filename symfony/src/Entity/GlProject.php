@@ -25,6 +25,14 @@ use Doctrine\ORM\Mapping as ORM;
     new GetCollection(
         name: 'list',
         routeName: 'project-list'
+    ),
+    new GetCollection(
+        name: 'issue-list',
+        routeName: 'project-issue-list'
+    ),
+    new GetCollection(
+        name: 'time-note-list',
+        routeName: 'project-time-note-list',
     )
 ])]
 class GlProject
