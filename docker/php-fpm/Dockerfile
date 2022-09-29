@@ -3,7 +3,9 @@ FROM hub.irontec.com/internet/symfony/php-fpm-8/8.1
 # Xdebug
 ARG XDEBUG=false
 USER root
-RUN if [ "${XDEBUG}" = "true" ] ; then pecl install xdebug; docker-php-ext-enable xdebug; mv /usr/local/etc/php/conf.d/xdebug.disabled /usr/local/etc/php/conf.d/xdebug.ini; fi
+
+ADD docker/php-fpm/xdebug.ini /usr/local/etc/php/conf.d/xdebug-custom.dev
+RUN if [ "${XDEBUG}" = "true" ] ; then pecl install xdebug; docker-php-ext-enable xdebug; mv /usr/local/etc/php/conf.d/xdebug-custom.dev /usr/local/etc/php/conf.d/xdebug.ini; fi
 
 ADD docker/php-fpm/opcache.ini /usr/local/etc/php/conf.d/opcache.dev
 
