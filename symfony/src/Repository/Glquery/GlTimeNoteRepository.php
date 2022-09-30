@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\Glquery;
 
-use App\Entity\GlProject;
+use App\Entity\Glquery\GlTimeNote;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<GlProject>
+ * @extends ServiceEntityRepository<GlTimeNote>
  *
- * @method GlProject|null find($id, $lockMode = null, $lockVersion = null)
- * @method GlProject|null findOneBy(array $criteria, array $orderBy = null)
- * @method GlProject[]    findAll()
- * @method GlProject[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method GlTimeNote|null find($id, $lockMode = null, $lockVersion = null)
+ * @method GlTimeNote|null findOneBy(array $criteria, array $orderBy = null)
+ * @method GlTimeNote[]    findAll()
+ * @method GlTimeNote[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class GlProjectRepository extends ServiceEntityRepository
+class GlTimeNoteRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, GlProject::class);
+        parent::__construct($registry, GlTimeNote::class);
     }
 
-    public function add(GlProject $entity, bool $flush = false): void
+    public function add(GlTimeNote $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class GlProjectRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(GlProject $entity, bool $flush = false): void
+    public function remove(GlTimeNote $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class GlProjectRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return GlProject[] Returns an array of GlProject objects
+//     * @return GlTimeNote[] Returns an array of GlTimeNote objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class GlProjectRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?GlProject
+//    public function findOneBySomeField($value): ?GlTimeNote
 //    {
 //        return $this->createQueryBuilder('g')
 //            ->andWhere('g.exampleField = :val')

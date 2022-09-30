@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Glquery;
 
-use App\Repository\GlTimeNoteRepository;
+use App\Repository\Glquery\GlTimeNoteRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
