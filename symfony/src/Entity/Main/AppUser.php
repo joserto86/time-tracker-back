@@ -2,14 +2,15 @@
 
 namespace App\Entity\Main;
 
-use App\Repository\Main\AdminRepository;
+use App\Repository\Main\AppUserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-#[ORM\Entity(repositoryClass: AdminRepository::class)]
-#[ORM\Table(name: '`admin`')]
-class Admin implements UserInterface, JWTUserInterface
+#[ORM\Entity(repositoryClass: AppUserRepository::class)]
+class AppUser implements UserInterface, JWTUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -21,6 +22,14 @@ class Admin implements UserInterface, JWTUserInterface
 
     #[ORM\Column]
     private array $roles = [];
+
+    #[ORM\OneToMany(mappedBy: 'appUser', targetEntity: AppUserInstance::class)]
+    private Collection $appUserInstances;
+
+    public function __construct()
+    {
+        $this->appUserInstances = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -79,7 +88,37 @@ class Admin implements UserInterface, JWTUserInterface
 
     public static function createFromPayload($username, array $payload)
     {
-        $admin = new Admin();
+        $admin = new AppUser();
         return $admin->setUsername($username);
+    }
+
+    /**
+     * @return Collection<int, AppUserInstance>
+     */
+    public function getAppUserInstances(): Collection
+    {
+        return $this->appUserInstances;
+    }
+
+    public function addAppUserInstance(AppUserInstance $appUserInstance): self
+    {
+        if (!$this->appUserInstances->contains($appUserInstance)) {
+            $this->appUserInstances->add($appUserInstance);
+            $appUserInstance->setAppUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAppUserInstance(AppUserInstance $appUserInstance): self
+    {
+        if ($this->appUserInstances->removeElement($appUserInstance)) {
+            // set the owning side to null (unless already changed)
+            if ($appUserInstance->getAppUser() === $this) {
+                $appUserInstance->setAppUser(null);
+            }
+        }
+
+        return $this;
     }
 }

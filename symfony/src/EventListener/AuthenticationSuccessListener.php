@@ -2,7 +2,7 @@
 
 namespace App\EventListener;
 
-use App\Entity\Main\Admin;
+use App\Entity\Main\AppUser;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Symfony\Component\Ldap\Security\LdapUser;
@@ -25,9 +25,9 @@ class AuthenticationSuccessListener
             return;
         }
 
-        /** @var Admin $userLocal */
-        if (!$userLocal = $this->em->getRepository(Admin::class)->findOneBy(['username' => $user->getUsername()])) {
-            $userLocal = new Admin();
+        /** @var AppUser $userLocal */
+        if (!$userLocal = $this->em->getRepository(AppUser::class)->findOneBy(['username' => $user->getUsername()])) {
+            $userLocal = new AppUser();
             $userLocal->setUsername($user->getUsername());
             $this->em->persist($userLocal);
             $this->em->flush();
