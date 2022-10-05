@@ -45,8 +45,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccessResponse, priority: -10 }
 
-#    app.custom_authenticator:
-#        class: App\Security\TokenAuthenticator
-#        parent: lexik_jwt_authentication.security.jwt_authenticator
+    Irontec\SymfonyTools\GetEntities\GetEntities:
+        arguments: [ "@doctrine" ]
+
 
 

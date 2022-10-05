@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\Main;
 
-use App\Entity\Admin;
+use App\Entity\Main\AppUser;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Admin>
+ * @extends ServiceEntityRepository<AppUser>
  *
- * @method Admin|null find($id, $lockMode = null, $lockVersion = null)
- * @method Admin|null findOneBy(array $criteria, array $orderBy = null)
- * @method Admin[]    findAll()
- * @method Admin[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method AppUser|null find($id, $lockMode = null, $lockVersion = null)
+ * @method AppUser|null findOneBy(array $criteria, array $orderBy = null)
+ * @method AppUser[]    findAll()
+ * @method AppUser[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class AdminRepository extends ServiceEntityRepository
+class AppUserRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Admin::class);
+        parent::__construct($registry, AppUser::class);
     }
 
-    public function add(Admin $entity, bool $flush = false): void
+    public function add(AppUser $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class AdminRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Admin $entity, bool $flush = false): void
+    public function remove(AppUser $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
