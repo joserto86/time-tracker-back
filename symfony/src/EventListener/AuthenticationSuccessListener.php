@@ -32,7 +32,7 @@ class AuthenticationSuccessListener
             $this->em->persist($userLocal);
             $this->em->flush();
         } else {
-            $data = (array_merge($data, ['instances' => $userLocal->getInstances()]));
+            //$data = (array_merge($data, ['instances' => $userLocal->getInstances()]));
         }
 
         $event->setData($data);
