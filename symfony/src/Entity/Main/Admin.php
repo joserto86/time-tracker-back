@@ -22,6 +22,9 @@ class Admin implements UserInterface, JWTUserInterface
     #[ORM\Column]
     private array $roles = [];
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $instances = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -81,5 +84,17 @@ class Admin implements UserInterface, JWTUserInterface
     {
         $admin = new Admin();
         return $admin->setUsername($username);
+    }
+
+    public function getInstances(): ?string
+    {
+        return $this->instances;
+    }
+
+    public function setInstances(?string $instances): self
+    {
+        $this->instances = $instances;
+
+        return $this;
     }
 }
