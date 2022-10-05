@@ -1,0 +1,3 @@
+gesdinet_jwt_refresh_token:
+    ttl: '%env(int:JWT_REFRESHTTL)%'
+    ttl_update: true

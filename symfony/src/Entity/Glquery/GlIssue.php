@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Glquery;
 
-use App\Repository\GlIssueRepository;
-use Doctrine\DBAL\Schema\Table;
+use App\Repository\Glquery\GlIssueRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
