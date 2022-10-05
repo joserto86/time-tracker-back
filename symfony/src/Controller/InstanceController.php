@@ -40,7 +40,7 @@ class InstanceController extends AbstractController
 
         $items = $this->getEntitiesService->fetch(Instance::class, $where, $order, $limit, $page, false);
 
-        return $this->json($items, Response::HTTP_OK, ['X-Total-Items' => $count]);
+        return $this->json($items, Response::HTTP_OK, ['X-Total-Items' => $count], ['groups' => 'general']);
     }
 
     #[Route(path: '/{id}', name: 'post-token', methods: ['POST'], defaults: ['_api_resource_class' => Instance::class])]
@@ -53,7 +53,6 @@ class InstanceController extends AbstractController
             'instance' => $instance,
             'appUser' => $user
         ]);
-
 
         if ($appUserInstance) {
             $appUserInstance->setToken($token);

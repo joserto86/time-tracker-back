@@ -4,6 +4,7 @@ namespace App\Entity\Main;
 
 use App\Repository\Main\AppUserInstanceRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
 
 #[ORM\Entity(repositoryClass: AppUserInstanceRepository::class)]
 class AppUserInstance
@@ -14,6 +15,7 @@ class AppUserInstance
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Encrypted]
     private ?string $token = null;
 
     #[ORM\ManyToOne(inversedBy: 'AppUserInstances')]

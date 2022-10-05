@@ -6,6 +6,7 @@ use App\Repository\Main\InstanceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: InstanceRepository::class)]
 class Instance
@@ -13,9 +14,11 @@ class Instance
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['general'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(['general'])]
     private ?string $url = null;
 
     #[ORM\OneToMany(mappedBy: 'instance', targetEntity: AppUserInstance::class)]
