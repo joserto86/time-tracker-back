@@ -2,6 +2,9 @@
 
 namespace App\Entity\Glquery;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\Glquery\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,6 +13,22 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'instance', columns: ['instance'])]
 #[ORM\Index(name: 'username', columns: ['username'])]
 #[ORM\Index(name: 'name', columns: ['name'])]
+
+#[ApiResource(operations: [
+    new Get(
+        uriTemplate: '/user/{id}',
+        requirements: ['id' => '\d+'],
+    ),
+    new GetCollection(
+        name: 'list',
+        routeName: 'user-list'
+    ),
+    new GetCollection(
+        name: 'project-list',
+        routeName: 'user-project-list',
+        read: 'id'
+    )
+])]
 class User
 {
     #[ORM\Id]

@@ -3,6 +3,9 @@
 namespace App\Entity\Glquery;
 
 use App\Repository\Glquery\GlIssueRepository;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -19,6 +22,21 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'title', columns: ['title'])]
 #[ORM\Index(name: 'projectiid', columns: ['gl_project_id'])]
 #[ORM\Index(name: 'idd', columns: ['gl_iid'])]
+
+#[ApiResource(operations: [
+    new Get(
+        uriTemplate: '/issue/{id}',
+        requirements: ['id' => '\d+'],
+    ),
+    new GetCollection(
+        name: 'list',
+        routeName: 'issue-list'
+    ),
+    new GetCollection(
+        name: 'time-note-list',
+        routeName: 'issue-time-note-list'
+    )
+])]
 class GlIssue
 {
     #[ORM\Id]

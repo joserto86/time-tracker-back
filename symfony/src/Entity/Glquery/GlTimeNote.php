@@ -3,6 +3,9 @@
 namespace App\Entity\Glquery;
 
 use App\Repository\Glquery\GlTimeNoteRepository;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -14,6 +17,17 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'gl_project_id', columns: ['gl_project_id'])]
 #[ORM\Index(name: 'gl_iid', columns: ['gl_id'])]
 #[ORM\Index(name: 'gl_instance', columns: ['gl_instance'])]
+
+#[ApiResource(operations: [
+    new Get(
+        uriTemplate: '/time-note/{id}',
+        requirements: ['id' => '\d+'],
+    ),
+    new GetCollection(
+        name: 'list',
+        routeName: 'time-note-list'
+    )
+])]
 class GlTimeNote
 {
     #[ORM\Id]
