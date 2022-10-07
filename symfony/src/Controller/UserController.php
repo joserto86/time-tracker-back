@@ -15,13 +15,17 @@ class UserController extends AbstractTimeTrackerController
     #[Route(name: 'list', methods: ['GET'])]
     public function list(Request $request): JsonResponse
     {
-        $users = $this->filtrateAndPaginate($request, User::class);
+        try {
+            $users = $this->filtrateAndPaginate($request, User::class);
 
-        if ($users['count'] === 0) {
-            return $this->json([], Response::HTTP_NO_CONTENT);
+            if ($users['count'] === 0) {
+                return $this->json([], Response::HTTP_NO_CONTENT);
+            }
+
+            return $this->json($users['items'], Response::HTTP_OK, ['X-Total-Items' => $users['count']]);
+        } catch (\LogicException $e) {
+            return $this->json($e->getMessage(), $e->getCode());
         }
-
-        return $this->json($users['items'], Response::HTTP_OK, ['X-Total-Items' => $users['count']]);
     }
 
     #[Route(
@@ -40,6 +44,6 @@ class UserController extends AbstractTimeTrackerController
             return $this->json([], Response::HTTP_NO_CONTENT);
         }
 
-        return $this->json(array_reverse($result['items']), Response::HTTP_OK, ['X-Total-Items' => $result['count']]);
+        return $this->json($result['items'], Response::HTTP_OK, ['X-Total-Items' => $result['count'], ['groups' => 'list']]);
     }
 }

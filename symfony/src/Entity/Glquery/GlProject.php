@@ -8,14 +8,15 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: GlProjectRepository::class)]
 #[ORM\Table(name: 'gl_projects')]
-#[ORM\Index(name: 'instance_group', columns: ['gl_instance_group'])]
-#[ORM\Index(name: 'namespace', columns: ['namespace'])]
-#[ORM\Index(name: 'name', columns: ['name'])]
-#[ORM\Index(name: 'glid', columns: ['gl_id'])]
-#[ORM\Index(name: 'instance', columns: ['gl_instance'])]
+#[ORM\Index(columns: ['gl_instance_group'], name: 'instance_group')]
+#[ORM\Index(columns: ['namespace'], name: 'namespace')]
+#[ORM\Index(columns: ['name'], name: 'name')]
+#[ORM\Index(columns: ['gl_id'], name: 'glid')]
+#[ORM\Index(columns: ['gl_instance'], name: 'instance')]
 
 #[ApiResource(operations: [
     new Get(
@@ -23,16 +24,16 @@ use Doctrine\ORM\Mapping as ORM;
         requirements: ['id' => '\d+'],
     ),
     new GetCollection(
-        name: 'list',
-        routeName: 'project-list'
+        routeName: 'project-list',
+        name: 'list'
     ),
     new GetCollection(
-        name: 'issue-list',
-        routeName: 'project-issue-list'
+        routeName: 'project-issue-list',
+        name: 'issue-list'
     ),
     new GetCollection(
-        name: 'time-note-list',
         routeName: 'project-time-note-list',
+        name: 'time-note-list',
     )
 ])]
 class GlProject
@@ -40,27 +41,34 @@ class GlProject
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['list'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 200)]
+    #[Groups(['list'])]
     private ?string $glInstance = null;
 
     #[ORM\Column]
+    #[Groups(['list'])]
     private ?int $glId = null;
 
     #[ORM\Column(length: 200)]
+    #[Groups(['list'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 200)]
+    #[Groups(['list'])]
     private ?string $namespace = null;
 
     #[ORM\Column]
+    #[Groups(['list'])]
     private ?\DateTime $lastActivityAt = null;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $data = null;
 
     #[ORM\Column]
+    #[Groups(['list'])]
     private ?int $glInstanceGroup = null;
 
     public function getId(): ?int

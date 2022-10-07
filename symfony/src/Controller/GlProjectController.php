@@ -5,11 +5,17 @@ namespace App\Controller;
 use App\Entity\Glquery\GlIssue;
 use App\Entity\Glquery\GlProject;
 use App\Entity\Glquery\GlTimeNote;
+use App\Model\GlMilestone;
+use App\Repository\Glquery\GlIssueRepository;
+use App\Repository\Glquery\GlProjectRepository;
 use Irontec\SymfonyTools\GetEntities\GetEntities;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 #[Route('/api/project', name: 'project-', defaults: ['_format' => 'json'])]
 class GlProjectController extends AbstractTimeTrackerController
@@ -24,7 +30,7 @@ class GlProjectController extends AbstractTimeTrackerController
                 return $this->json([], Response::HTTP_NO_CONTENT);
             }
 
-            return $this->json($projects['items'], Response::HTTP_OK, ['X-Total-Items' => $projects['count']]);
+            return $this->json($projects['items'], Response::HTTP_OK, ['X-Total-Items' => $projects['count']], ['groups' => 'list']);
         } catch (\LogicException $e) {
             return $this->json($e->getMessage(), $e->getCode());
         }
@@ -90,6 +96,30 @@ class GlProjectController extends AbstractTimeTrackerController
             }
 
             return $this->json(array_reverse($result['items']), 200, ['X-Total-Items' => $result['count']]);
+        } catch (\LogicException $e) {
+            return $this->json($e->getMessage(), $e->getCode());
+        }
+    }
+
+    #[Route(
+        path: '/{id}/milestone',
+        name: 'milestone-list',
+        defaults: [
+            '_api_resource_class' => GlProject::class,
+        ],
+        methods: ['GET'],
+    )]
+    public function getProjectMilestones(GlProject $project, Request $request, GlIssueRepository $repository)
+    {
+        try{
+            $result = $repository->getMilestonesByProject($request, $project);
+
+            if ($result['count'] === 0) {
+                return $this->json([], Response::HTTP_NO_CONTENT);
+            }
+
+            return $this->json($result['items'], Response::HTTP_OK, ['X-Total-Items' => $result['count']]);
+
         } catch (\LogicException $e) {
             return $this->json($e->getMessage(), $e->getCode());
         }

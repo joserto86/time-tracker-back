@@ -10,9 +10,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
-#[ORM\Index(name: 'instance', columns: ['instance'])]
-#[ORM\Index(name: 'username', columns: ['username'])]
-#[ORM\Index(name: 'name', columns: ['name'])]
+#[ORM\Index(columns: ['instance'], name: 'instance')]
+#[ORM\Index(columns: ['username'], name: 'username')]
+#[ORM\Index(columns: ['name'], name: 'name')]
 
 #[ApiResource(operations: [
     new Get(
@@ -20,13 +20,13 @@ use Doctrine\ORM\Mapping as ORM;
         requirements: ['id' => '\d+'],
     ),
     new GetCollection(
-        name: 'list',
-        routeName: 'user-list'
+        routeName: 'user-list',
+        name: 'list'
     ),
     new GetCollection(
-        name: 'project-list',
         routeName: 'user-project-list',
-        read: 'id'
+        read: 'id',
+        name: 'project-list'
     )
 ])]
 class User

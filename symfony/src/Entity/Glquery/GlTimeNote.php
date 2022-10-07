@@ -8,15 +8,16 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: GlTimeNoteRepository::class)]
 #[ORM\Table(name: 'gl_time_notes')]
-#[ORM\Index(name: 'spent_at', columns: ['spent_at'])]
-#[ORM\Index(name: 'updated_at', columns: ['updated_at'])]
-#[ORM\Index(name: 'created_at', columns: ['created_at'])]
-#[ORM\Index(name: 'gl_project_id', columns: ['gl_project_id'])]
-#[ORM\Index(name: 'gl_iid', columns: ['gl_id'])]
-#[ORM\Index(name: 'gl_instance', columns: ['gl_instance'])]
+#[ORM\Index(columns: ['spent_at'], name: 'spent_at')]
+#[ORM\Index(columns: ['updated_at'], name: 'updated_at')]
+#[ORM\Index(columns: ['created_at'], name: 'created_at')]
+#[ORM\Index(columns: ['gl_project_id'], name: 'gl_project_id')]
+#[ORM\Index(columns: ['gl_id'], name: 'gl_iid')]
+#[ORM\Index(columns: ['gl_instance'], name: 'gl_instance')]
 
 #[ApiResource(operations: [
     new Get(
@@ -24,8 +25,8 @@ use Doctrine\ORM\Mapping as ORM;
         requirements: ['id' => '\d+'],
     ),
     new GetCollection(
-        name: 'list',
-        routeName: 'time-note-list'
+        routeName: 'time-note-list',
+        name: 'list'
     )
 ])]
 class GlTimeNote
@@ -33,51 +34,66 @@ class GlTimeNote
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['list'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 200)]
+    #[Groups(['list'])]
     private ?string $glInstance = null;
 
     #[ORM\Column]
+    #[Groups(['list'])]
     private ?int $glId = null;
 
     #[ORM\Column]
+    #[Groups(['list'])]
     private ?int $glProjectId = null;
 
     #[ORM\Column]
+    #[Groups(['list'])]
     private ?int $glIssueId = null;
 
     #[ORM\Column(length: 200)]
+    #[Groups(['list'])]
     private ?string $body = null;
 
     #[ORM\Column(length: 200)]
+    #[Groups(['list'])]
     private ?string $author = null;
 
     #[ORM\Column(type: Types::BIGINT, nullable: true)]
+    #[Groups(['list'])]
     private ?string $secondsAdded = null;
 
     #[ORM\Column(type: Types::BIGINT, nullable: true)]
+    #[Groups(['list'])]
     private ?int $secondsSubtracted = null;
 
     #[ORM\Column(type: Types::BOOLEAN , nullable: true)]
+    #[Groups(['list'])]
     private ?string $secondsRemoved = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['list'])]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['list'])]
     private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['list'])]
     private ?\DateTimeInterface $spentAt = null;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $data = null;
 
     #[ORM\Column]
+    #[Groups(['list'])]
     private ?int $glIssueIid = null;
 
     #[ORM\Column(type: Types::BIGINT, nullable: true)]
+    #[Groups(['list'])]
     private ?int $computed = null;
 
     public function getId(): ?int

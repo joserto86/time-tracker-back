@@ -34,6 +34,9 @@ doctrine:
                         dir: '%kernel.project_dir%/src/Entity/Glquery'
                         prefix: 'App\Entity\Glquery'
                         alias: Glquery
+                dql:
+                    string_functions:
+                        JSON_EXTRACT: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Mysql\JsonExtract
 
 when@test:
     doctrine:

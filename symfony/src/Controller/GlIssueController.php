@@ -23,7 +23,7 @@ class GlIssueController extends AbstractTimeTrackerController
                 return $this->json([], Response::HTTP_NO_CONTENT);
             }
 
-            return $this->json($issues['items'], Response::HTTP_OK, ['X-Total-Items' => $issues['count']]);
+            return $this->json($issues['items'], Response::HTTP_OK, ['X-Total-Items' => $issues['count']], ['groups' => 'list']);
         } catch (\LogicException $e) {
             return $this->json($e->getMessage(), $e->getCode());
         }
@@ -56,7 +56,7 @@ class GlIssueController extends AbstractTimeTrackerController
                 return $this->json([], 204);
             }
 
-            return $this->json(array_reverse($result['items']), 200, ['X-Total-Items' => $result['count']]);
+            return $this->json($result['items'], Response::HTTP_OK, ['X-Total-Items' => $result['count']]);
         } catch (\LogicException $e) {
             return $this->json($e->getMessage(), $e->getCode());
         }
