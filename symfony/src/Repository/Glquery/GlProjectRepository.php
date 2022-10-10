@@ -3,8 +3,14 @@
 namespace App\Repository\Glquery;
 
 use App\Entity\Glquery\GlProject;
+use App\Entity\Glquery\GlTimeNote;
+use App\Entity\Glquery\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Irontec\SymfonyTools\GetEntities\GetEntities;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @extends ServiceEntityRepository<GlProject>
@@ -16,9 +22,13 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class GlProjectRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+
+    protected GetEntities $getEntitiesService;
+
+    public function __construct(ManagerRegistry $registry, GetEntities $getEntities)
     {
         parent::__construct($registry, GlProject::class);
+        $this->getEntitiesService = $getEntities;
     }
 
     public function add(GlProject $entity, bool $flush = false): void
@@ -38,6 +48,55 @@ class GlProjectRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    public function getProjectsByUser(Request $request, User $user): array
+    {
+        $page = intval($request->get('page', 1));
+        $limit = (int)$request->get('limit', -1);
+
+        $where = $this->getEntitiesService->parseWhere($request->get('where', '{}'));
+        $order = $this->getEntitiesService->prepareOrder($request->get('order'));
+
+        $cQB = $this->getProjectsByUserQueryBuilder($user);
+        $cQBCount = $this->getProjectsByUserQueryBuilder($user, false);
+
+        if (!empty($where)) {
+            $cQB = $this->getEntitiesService->where($cQB, $this->getEntitiesService->getAlias(GlProject::class), $where);
+            $cQBCount = $this->getEntitiesService->where($cQB, $this->getEntitiesService->getAlias(GlProject::class), $where);
+        }
+
+        $count = $cQBCount->select($cQB->expr()->countDistinct('p'))->getQuery()->getSingleResult();
+
+        if (is_int($limit) && $limit > 0) {
+            $cQB->setFirstResult(GetEntities::prepareOffset($page, $limit));
+            $cQB->setMaxResults($limit);
+        }
+
+        return [
+            'items' => $cQB->getQuery()->getResult(),
+            'count' => $count
+        ];
+    }
+
+    protected function getProjectsByUserQueryBuilder(User $user, bool $groupBy = true) :QueryBuilder
+    {
+        $cQB = $this->createQueryBuilder('p')
+            ->select('p')
+            ->join(GlTimeNote::class, 'tn', Join::WITH, 'p.glId = tn.glProjectId AND p.glInstance = tn.glInstance')
+            ->join(User::class, 'u', Join::WITH, 'tn.author = u.username AND tn.glInstance = u.instance')
+            ->where('u.username =:username')
+            ->andWhere('u.instance =:instance')
+            ->setParameter('username', $user->getUsername())
+            ->setParameter('instance', $user->getInstance());
+
+        if ($groupBy) {
+            $cQB->groupBy('p');
+        }
+
+        return $cQB;
+    }
+
+
 
 //    /**
 //     * @return GlProject[] Returns an array of GlProject objects

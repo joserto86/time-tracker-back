@@ -3,66 +3,102 @@
 namespace App\Entity\Glquery;
 
 use App\Repository\Glquery\GlIssueRepository;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: GlIssueRepository::class)]
 #[ORM\Table(name: 'gl_issues')]
-#[ORM\Index(name: 'instance', columns: ['gl_instance'])]
-#[ORM\Index(name: 'instance_group', columns: ['gl_instance_group'])]
-#[ORM\Index(name: 'author', columns: ['author'])]
-#[ORM\Index(name: 'assignee', columns: ['assignee'])]
-#[ORM\Index(name: 'updated_at', columns: ['updated_at'])]
-#[ORM\Index(name: 'created_at', columns: ['created_at'])]
-#[ORM\Index(name: 'state', columns: ['state'])]
-#[ORM\Index(name: 'description', columns: ['description'])]
-#[ORM\Index(name: 'title', columns: ['title'])]
-#[ORM\Index(name: 'projectiid', columns: ['gl_project_id'])]
-#[ORM\Index(name: 'idd', columns: ['gl_iid'])]
+#[ORM\Index(columns: ['gl_instance'], name: 'instance')]
+#[ORM\Index(columns: ['gl_instance_group'], name: 'instance_group')]
+#[ORM\Index(columns: ['author'], name: 'author')]
+#[ORM\Index(columns: ['assignee'], name: 'assignee')]
+#[ORM\Index(columns: ['updated_at'], name: 'updated_at')]
+#[ORM\Index(columns: ['created_at'], name: 'created_at')]
+#[ORM\Index(columns: ['state'], name: 'state')]
+#[ORM\Index(columns: ['description'], name: 'description')]
+#[ORM\Index(columns: ['title'], name: 'title')]
+#[ORM\Index(columns: ['gl_project_id'], name: 'projectiid')]
+#[ORM\Index(columns: ['gl_iid'], name: 'idd')]
+
+#[ApiResource(
+    operations: [
+        new Get(
+            uriTemplate: '/issue/{id}',
+            requirements: ['id' => '\d+'],
+            normalizationContext: ['groups' => ['list', 'detail']]
+        ),
+        new GetCollection(
+            routeName: 'issue-list',
+            name: 'list'
+        ),
+        new GetCollection(
+            routeName: 'issue-time-note-list',
+            name: 'time-note-list'
+        )
+    ],
+    normalizationContext: ['groups' => ['list']]
+)]
 class GlIssue
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['list'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 200)]
+    #[Groups(['list'])]
     private ?string $glInstance = null;
 
     #[ORM\Column]
+    #[Groups(['list'])]
     private ?int $glInstanceGroup = null;
 
     #[ORM\Column]
+    #[Groups(['list'])]
     private ?int $glIid = null;
 
     #[ORM\Column]
+    #[Groups(['list'])]
     private ?int $glProjectId = null;
 
     #[ORM\Column(length: 500)]
+    #[Groups(['list'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
     #[ORM\Column(length: 200, nullable: true)]
+    #[Groups(['list'])]
     private ?string $state = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Groups(['list'])]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Groups(['list'])]
     private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\Column(length: 200, nullable: true)]
+    #[Groups(['list'])]
     private ?string $assignee = null;
 
     #[ORM\Column(length: 200, nullable: true)]
+    #[Groups(['list'])]
     private ?string $author = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['detail'])]
     private ?string $data = null;
 
     #[ORM\Column]
+    #[Groups(['list'])]
     private ?int $glId = null;
 
     public function getId(): ?int
