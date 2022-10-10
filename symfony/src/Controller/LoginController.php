@@ -13,6 +13,6 @@ class LoginController extends AbstractController
     #[Route('/login', name: 'app_login', methods: ['POST'])]
     public function login(): JsonResponse
     {
-        return new JsonResponse(["message" => "Invalid data"], 400, [], false);
+        return new JsonResponse(["code" => 400, "message" => "Bad Request"], 400, [], false);
     }
 }
