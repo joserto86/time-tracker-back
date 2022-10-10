@@ -2,6 +2,10 @@
 
 namespace App\Entity\Main;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
 use App\Repository\Main\InstanceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -9,6 +13,24 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: InstanceRepository::class)]
+#[ApiResource(
+    operations: [
+        new Get(
+            uriTemplate: '/instance/{id}',
+            requirements: ['id' => '\d+'],
+        ),
+        new GetCollection(
+            routeName: 'instance-list',
+            name: 'list'
+        ),
+        new Post(
+            routeName: 'instance-post-token',
+            description: 'Set token for instance',
+            name: 'post-token'
+        )
+    ],
+    normalizationContext: ['groups' => ['list']]
+)]
 class Instance
 {
     #[ORM\Id]

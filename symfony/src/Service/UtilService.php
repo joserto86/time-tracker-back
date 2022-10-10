@@ -3,8 +3,7 @@
 namespace App\Service;
 
 use Irontec\SymfonyTools\GetEntities\GetEntities;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use ReflectionException;
 
 class UtilService
 {
@@ -16,11 +15,13 @@ class UtilService
     }
 
 
+    /**
+     * @throws ReflectionException
+     */
     public function getDefaultFieldOrderName(string $entityName): string
     {
         $reflector = new \ReflectionClass($entityName);
         $attributes = $reflector->getProperties();
-        /** @var \ReflectionProperty $first */
         $first = $attributes[0];
         return  sprintf('[{"field":"%s","order":"ASC"}]', $first->getName());
     }
