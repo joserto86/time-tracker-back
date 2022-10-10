@@ -51,11 +51,6 @@ services:
     time_tracker.normalizer:
         class: App\Serializer\TimeTrackerModelNormalizer
 
-#    time_tracker.serializer:
-#        class: Symfony\Component\Serializer\Serializer
-#        arguments:
-#            - [ '@time_tracker.normalizer', '@serializer.normalizer.object', '@serializer.normalizer.datetime' ]
-#            - [ '@serializer.encoder.json' ]
 
 
 
