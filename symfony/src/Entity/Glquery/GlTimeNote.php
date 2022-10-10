@@ -19,16 +19,20 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Index(columns: ['gl_id'], name: 'gl_iid')]
 #[ORM\Index(columns: ['gl_instance'], name: 'gl_instance')]
 
-#[ApiResource(operations: [
-    new Get(
-        uriTemplate: '/time-note/{id}',
-        requirements: ['id' => '\d+'],
-    ),
-    new GetCollection(
-        routeName: 'time-note-list',
-        name: 'list'
-    )
-])]
+#[ApiResource(
+    operations: [
+        new Get(
+            uriTemplate: '/time-note/{id}',
+            requirements: ['id' => '\d+'],
+            normalizationContext: ['groups' => ['list', 'detail']]
+        ),
+        new GetCollection(
+            routeName: 'time-note-list',
+            name: 'list'
+        )
+    ],
+    normalizationContext: ['groups' => ['list']]
+)]
 class GlTimeNote
 {
     #[ORM\Id]
@@ -86,6 +90,7 @@ class GlTimeNote
     private ?\DateTimeInterface $spentAt = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['detail'])]
     private ?string $data = null;
 
     #[ORM\Column]

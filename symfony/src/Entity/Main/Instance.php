@@ -14,11 +14,11 @@ class Instance
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['general'])]
+    #[Groups(['list'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
-    #[Groups(['general'])]
+    #[Groups(['list'])]
     private ?string $url = null;
 
     #[ORM\OneToMany(mappedBy: 'instance', targetEntity: AppUserInstance::class)]

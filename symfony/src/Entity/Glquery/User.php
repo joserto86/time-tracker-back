@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Repository\Glquery\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
@@ -14,38 +15,56 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(columns: ['username'], name: 'username')]
 #[ORM\Index(columns: ['name'], name: 'name')]
 
-#[ApiResource(operations: [
-    new Get(
-        uriTemplate: '/user/{id}',
-        requirements: ['id' => '\d+'],
-    ),
-    new GetCollection(
-        routeName: 'user-list',
-        name: 'list'
-    ),
-    new GetCollection(
-        routeName: 'user-project-list',
-        read: 'id',
-        name: 'project-list'
-    )
-])]
+#[ApiResource(
+    operations: [
+        new Get(
+            uriTemplate: '/user/{id}',
+            requirements: ['id' => '\d+'],
+        ),
+        new GetCollection(
+            routeName: 'user-list',
+            name: 'list'
+        ),
+        new GetCollection(
+            routeName: 'user-project-list',
+            read: 'id',
+            name: 'project-list'
+        ),
+        new GetCollection(
+            routeName: 'user-project-issue-list',
+            read: 'id',
+            name: 'project-issue-list'
+        ),
+        new GetCollection(
+            routeName: 'user-project-time-note-list',
+            read: 'id',
+            name: 'project-time-note-list'
+        )
+    ],
+    normalizationContext: ['groups' => ['list']]
+)]
 class User
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['list'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 200, nullable: true)]
+    #[Groups(['list'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 200)]
+    #[Groups(['list'])]
     private ?string $username = null;
 
     #[ORM\Column(length: 200)]
+    #[Groups(['list'])]
     private ?string $instance = null;
 
     #[ORM\Column(length: 200, nullable: true)]
+    #[Groups(['list'])]
     private ?string $team = null;
 
     public function getId(): ?int

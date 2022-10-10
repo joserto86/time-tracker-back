@@ -24,20 +24,24 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Index(columns: ['gl_project_id'], name: 'projectiid')]
 #[ORM\Index(columns: ['gl_iid'], name: 'idd')]
 
-#[ApiResource(operations: [
-    new Get(
-        uriTemplate: '/issue/{id}',
-        requirements: ['id' => '\d+'],
-    ),
-    new GetCollection(
-        routeName: 'issue-list',
-        name: 'list'
-    ),
-    new GetCollection(
-        routeName: 'issue-time-note-list',
-        name: 'time-note-list'
-    )
-])]
+#[ApiResource(
+    operations: [
+        new Get(
+            uriTemplate: '/issue/{id}',
+            requirements: ['id' => '\d+'],
+            normalizationContext: ['groups' => ['list', 'detail']]
+        ),
+        new GetCollection(
+            routeName: 'issue-list',
+            name: 'list'
+        ),
+        new GetCollection(
+            routeName: 'issue-time-note-list',
+            name: 'time-note-list'
+        )
+    ],
+    normalizationContext: ['groups' => ['list']]
+)]
 class GlIssue
 {
     #[ORM\Id]
@@ -90,6 +94,7 @@ class GlIssue
     private ?string $author = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['detail'])]
     private ?string $data = null;
 
     #[ORM\Column]

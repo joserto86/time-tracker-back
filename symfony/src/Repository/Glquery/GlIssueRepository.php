@@ -4,10 +4,12 @@ namespace App\Repository\Glquery;
 
 use App\Entity\Glquery\GlIssue;
 use App\Entity\Glquery\GlProject;
+use App\Entity\Glquery\GlTimeNote;
+use App\Entity\Glquery\User;
 use App\Model\GlMilestone;
 use App\Serializer\TimeTrackerModelNormalizer;
-use App\Service\UtilService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Irontec\SymfonyTools\GetEntities\GetEntities;
@@ -40,16 +42,10 @@ class GlIssueRepository extends ServiceEntityRepository
 
     protected GetEntities $getEntitiesService;
 
-    protected UtilService $utilService;
-
-    protected SerializerInterface $serializer;
-
-    public function __construct(ManagerRegistry $registry, GetEntities $getEntities, UtilService $utilService, SerializerInterface $serializer)
+    public function __construct(ManagerRegistry $registry, GetEntities $getEntities)
     {
         parent::__construct($registry, GlIssue::class);
         $this->getEntitiesService = $getEntities;
-        $this->utilService = $utilService;
-        $this->serializer = $serializer;
     }
 
     public function add(GlIssue $entity, bool $flush = false): void
@@ -119,12 +115,6 @@ class GlIssueRepository extends ServiceEntityRepository
         if ($where) {
             foreach ($where as $key => $value) {
                 if (in_array($value[GetEntities::PARAM_METHOD], self::AVAILABLE_METHODS) ) {
-                    if ($value[GetEntities::PARAM_METHOD] === GetEntities::METHOD_LIKE
-                        || $value[GetEntities::PARAM_METHOD] === GetEntities::METHOD_NOT_LIKE
-                    ) {
-                        $value[GetEntities::PARAM_VALUE] = "%{$value[GetEntities::PARAM_VALUE]}%";
-                    }
-
                     $expr = "JSON_EXTRACT(i.data, '$.milestone.{$value[GetEntities::PARAM_FIELD]}') {$value[GetEntities::PARAM_METHOD]} '{$value[GetEntities::PARAM_VALUE]}'";
                     $cQB->andWhere($expr);
                 }

@@ -41,7 +41,6 @@ class GlProjectController extends AbstractTimeTrackerController
         name: 'issue-list',
         defaults: [
             '_api_resource_class' => GlProject::class,
-            '_api_operation_name' => '_api_/project/{id}/issue-list',
         ],
         methods: ['GET'],
     )]
@@ -63,7 +62,7 @@ class GlProjectController extends AbstractTimeTrackerController
                 return $this->json([], Response::HTTP_NO_CONTENT);
             }
 
-            return $this->json(array_reverse($result['items']), 200, ['X-Total-Items' => $result['count']]);
+            return $this->json(array_reverse($result['items']), 200, ['X-Total-Items' => $result['count']], ['groups' => 'list']);
         } catch (\LogicException $e) {
             return $this->json($e->getMessage(), $e->getCode());
         }
@@ -95,7 +94,7 @@ class GlProjectController extends AbstractTimeTrackerController
                 return $this->json([], 204);
             }
 
-            return $this->json(array_reverse($result['items']), 200, ['X-Total-Items' => $result['count']]);
+            return $this->json(array_reverse($result['items']), 200, ['X-Total-Items' => $result['count']], ['groups' => 'list']);
         } catch (\LogicException $e) {
             return $this->json($e->getMessage(), $e->getCode());
         }

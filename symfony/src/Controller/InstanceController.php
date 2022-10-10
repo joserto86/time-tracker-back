@@ -24,7 +24,7 @@ class InstanceController extends AbstractTimeTrackerController
                 return $this->json([], Response::HTTP_NO_CONTENT);
             }
 
-            return $this->json($result['items'], Response::HTTP_OK, ['X-Total-Items' => $result['count']], ['groups' => 'general']);
+            return $this->json($result['items'], Response::HTTP_OK, ['X-Total-Items' => $result['count']], ['groups' => 'list']);
         } catch (\LogicException $e) {
             return $this->json($e->getMessage(), $e->getCode());
         }

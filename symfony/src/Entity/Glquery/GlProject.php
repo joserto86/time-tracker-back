@@ -18,24 +18,28 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Index(columns: ['gl_id'], name: 'glid')]
 #[ORM\Index(columns: ['gl_instance'], name: 'instance')]
 
-#[ApiResource(operations: [
-    new Get(
-        uriTemplate: '/project/{id}',
-        requirements: ['id' => '\d+'],
-    ),
-    new GetCollection(
-        routeName: 'project-list',
-        name: 'list'
-    ),
-    new GetCollection(
-        routeName: 'project-issue-list',
-        name: 'issue-list'
-    ),
-    new GetCollection(
-        routeName: 'project-time-note-list',
-        name: 'time-note-list',
-    )
-])]
+#[ApiResource(
+    operations: [
+        new Get(
+            uriTemplate: '/project/{id}',
+            requirements: ['id' => '\d+'],
+            normalizationContext: ['groups' => ['list', 'detail']],
+        ),
+        new GetCollection(
+            routeName: 'project-list',
+            name: 'list'
+        ),
+        new GetCollection(
+            routeName: 'project-issue-list',
+            name: 'issue-list'
+        ),
+        new GetCollection(
+            routeName: 'project-time-note-list',
+            name: 'time-note-list',
+        )
+    ],
+    normalizationContext: ['groups' => ['list']]
+)]
 class GlProject
 {
     #[ORM\Id]
@@ -65,6 +69,7 @@ class GlProject
     private ?\DateTime $lastActivityAt = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['detail'])]
     private ?string $data = null;
 
     #[ORM\Column]
