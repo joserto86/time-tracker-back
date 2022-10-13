@@ -5,6 +5,9 @@ namespace App\Controller;
 use App\Entity\Main\AppUser;
 use App\Entity\Main\AppUserInstance;
 use App\Entity\Main\Instance;
+use App\Repository\Main\AppUserRepository;
+use App\Service\GitlabService;
+use App\Service\InstanceService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,15 +34,12 @@ class InstanceController extends AbstractTimeTrackerController
     }
 
     #[Route(path: '/{id}', name: 'post-token', defaults: ['_api_resource_class' => Instance::class], methods: ['POST'])]
-    public function postToken(Instance $instance, Request $request, EntityManagerInterface $em): JsonResponse
+    public function postToken(Instance $instance, Request $request, EntityManagerInterface $em, InstanceService $service): JsonResponse
     {
         $user = $em->getRepository(AppUser::class)->findOneBy(['username' => $this->getUser()->getUserIdentifier()]);
         $token = $request->request->get('token');
 
-        $appUserInstance = $em->getRepository(AppUserInstance::class)->findOneBy([
-            'instance' => $instance,
-            'appUser' => $user
-        ]);
+        $appUserInstance = $service->getAppUserInstance($instance, $user);
 
         if ($appUserInstance) {
             $appUserInstance->setToken($token);
@@ -54,5 +54,44 @@ class InstanceController extends AbstractTimeTrackerController
         $em->flush();
 
         return $this->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    #[Route(
+        path: '/{id}/status',
+        name: 'status',
+        defaults: [
+            '_api_resource_class' => Instance::class,
+        ],
+        methods: ['GET'])]
+    public function getInstanceStatus(Instance $instance, GitlabService $service, AppUserRepository $repository) :JsonResponse
+    {
+        try {
+            $user = $repository->findOneBy(['username' => $this->getUser()->getUserIdentifier()]);
+            $status = $service->status($instance, $user);
+
+            return $this->json($status, Response::HTTP_OK);
+        } catch (\LogicException $e) {
+            return $this->json($e->getMessage(), $e->getCode());
+        }
+
+    }
+
+    #[Route(
+        path: '/{id}/user-data',
+        name: 'user-data',
+        defaults: [
+            '_api_resource_class' => Instance::class,
+        ],
+        methods: ['GET'])]
+    public function getInstanceUserData(Instance $instance, GitlabService $service, AppUserRepository $repository): JsonResponse
+    {
+        try {
+            $user = $repository->findOneBy(['username' => $this->getUser()->getUserIdentifier()]);
+            $data = $service->getUserData($instance, $user);
+
+            return $this->json($data, Response::HTTP_OK);
+        } catch (\LogicException $e) {
+            return $this->json($e->getMessage(), $e->getCode());
+        }
     }
 }

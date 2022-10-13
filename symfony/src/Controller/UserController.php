@@ -6,7 +6,6 @@ use App\Entity\Glquery\GlIssue;
 use App\Entity\Glquery\GlProject;
 use App\Entity\Glquery\GlTimeNote;
 use App\Entity\Glquery\User;
-use App\Repository\Glquery\GlIssueRepository;
 use App\Repository\Glquery\GlProjectRepository;
 use Irontec\SymfonyTools\GetEntities\GetEntities;
 use Symfony\Component\HttpFoundation\JsonResponse;
