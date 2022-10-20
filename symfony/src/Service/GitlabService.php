@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Glquery\GlIssue;
 use App\Entity\Main\AppUser;
+use App\Entity\Main\AppUserInstance;
 use App\Entity\Main\Instance;
 use App\Model\GlUser;
 use App\Model\TimeNote;
@@ -18,6 +19,11 @@ class GitlabService
     protected HttpClientInterface $client;
 
     protected InstanceService $service;
+
+    private const VALID_RESPONSE_CODES = [
+        Response::HTTP_CREATED,
+        Response::HTTP_ACCEPTED
+    ];
 
     public function __construct(HttpClientInterface $client, InstanceService $service)
     {
@@ -74,35 +80,51 @@ class GitlabService
         throw new \LogicException('Invalid Token', Response::HTTP_UNAUTHORIZED);
     }
 
-    public function postTimeNote(GlIssue $issue, AppUser $user)
+    public function postTimeNote(GlIssue $issue, AppUser $user, TimeNote $timeNote)
     {
         if ($appInstance = $this->service->getAppUserInstanceByIssue($issue, $user)) {
             try {
-                $response = $this->client->request(
-                    'POST',
-                    "{$issue->getGlInstance()}/api/v4/projects/{$issue->getGlProjectId()}/issues/{$issue->getGlIid()}/notes",
-                    [
-                        'headers' => ['Authorization' => "Bearer {$appInstance->getToken()}"],
-                        'query' => ['body' => 'nota de prueba desde api time tracker aaa vamusss']
-                    ]
-                );
-
-                if ($response->getStatusCode() === Response::HTTP_CREATED) {
-                    return json_decode($response->getContent());
+                $result = $this->postNote($issue, $appInstance, $this->timeNoteToGitlabNote($timeNote));
+                if ($timeNote->getBody()) {
+                    $this->postNote($issue, $appInstance, $timeNote->getBody());
                 }
+
+                return $result;
 
             } catch (\Exception $e) {
                 throw new \LogicException('Invalid Request', Response::HTTP_BAD_REQUEST);
             }
         }
+
         throw new \LogicException('Invalid Token', Response::HTTP_UNAUTHORIZED);
+    }
+
+    private function postNote(GlIssue $issue, AppUserInstance $appInstance, string $body)
+    {
+        $response = $this->client->request(
+            'POST',
+            "{$issue->getGlInstance()}/api/v4/projects/{$issue->getGlProjectId()}/issues/{$issue->getGlIid()}/notes",
+            [
+                'headers' => ['Authorization' => "Bearer {$appInstance->getToken()}"],
+                'query' => ['body' => $body]
+            ]
+        );
+
+        if (in_array($response->getStatusCode(), self::VALID_RESPONSE_CODES)) {
+            return json_decode($response->getContent());
+        } else {
+            throw new \Exception();
+        }
     }
 
     private function timeNoteToGitlabNote(TimeNote $timeNote) :string
     {
         $time = $timeNote->getTimeSeconds() / 3600;
+        $date = '';
+        if ($timeNote->getDate()) {
+            $date = $timeNote->getDate()->format('Y-m-d');
+        }
 
-
-        return "/spend {$time}h {$timeNote->getBody()}";
+        return "/spend {$time}h {$date}";
     }
 }

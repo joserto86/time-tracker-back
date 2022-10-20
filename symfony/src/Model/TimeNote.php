@@ -8,6 +8,8 @@ class TimeNote implements TimeTrackerModelInterface
 
     protected int $timeSeconds;
 
+    protected ?\DateTimeInterface $date;
+
     public function getBody(): ?string
     {
         return $this->body;
@@ -27,6 +29,17 @@ class TimeNote implements TimeTrackerModelInterface
     public function setTimeSeconds(int $timeSeconds): TimeNote
     {
         $this->timeSeconds = $timeSeconds;
+        return $this;
+    }
+
+    public function getDate(): ?\DateTimeInterface
+    {
+        return $this->date;
+    }
+
+    public function setDate(?\DateTimeInterface $date): TimeNote
+    {
+        $this->date = $date;
         return $this;
     }
 }
