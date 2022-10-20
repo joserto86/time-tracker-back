@@ -33,6 +33,30 @@ class OperationsController extends AbstractTimeTrackerController
     public function postTimeNote(GlIssue $issue, Request $request, GitlabService $service)
     {
         try {
+
+            var_dump($request->getContent());die;
+
+            $appUser = $this->repository->findOneBy(['username' => $this->getUser()->getUserIdentifier()]);
+            $data = $service->postTimeNote($issue, $appUser);
+            return $this->json($data, Response::HTTP_OK);
+
+        } catch (\Exception $e) {
+            return $this->json([], Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    #[Route(
+        path: 'issue/{issueId}/time-note/{id}',
+        name: 'issue-time-note',
+        defaults: [
+            'issueId' => GlIssue::class,
+            'id' => GlProject::class,
+        ],
+        methods: ['POST']
+    )]
+    public function putTimeNote(GlIssue $issue, Request $request, GitlabService $service)
+    {
+        try {
             $appUser = $this->repository->findOneBy(['username' => $this->getUser()->getUserIdentifier()]);
             $data = $service->postTimeNote($issue, $appUser);
             return $this->json($data, Response::HTTP_OK);

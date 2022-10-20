@@ -6,6 +6,7 @@ use App\Entity\Glquery\GlIssue;
 use App\Entity\Main\AppUser;
 use App\Entity\Main\Instance;
 use App\Model\GlUser;
+use App\Model\TimeNote;
 use App\Serializer\TimeTrackerModelNormalizer;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -95,5 +96,13 @@ class GitlabService
             }
         }
         throw new \LogicException('Invalid Token', Response::HTTP_UNAUTHORIZED);
+    }
+
+    private function timeNoteToGitlabNote(TimeNote $timeNote) :string
+    {
+        $time = $timeNote->getTimeSeconds() / 3600;
+
+
+        return "/spend {$time}h {$timeNote->getBody()}";
     }
 }
