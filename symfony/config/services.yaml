@@ -45,6 +45,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccessResponse, priority: -10 }
 
+    time_tracker.event.time_tracker.event.refresh_token_expired_response_listener:
+        class: App\EventListener\RefreshTokenResponseListener
+        arguments: ['@router']
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onRefreshTokenFailureResponse }
+
+
     Irontec\SymfonyTools\GetEntities\GetEntities:
         arguments: [ "@doctrine" ]
 
