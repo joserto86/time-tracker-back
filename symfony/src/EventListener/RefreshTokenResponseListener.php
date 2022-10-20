@@ -2,9 +2,6 @@
 
 namespace App\EventListener;
 
-use Gesdinet\JWTRefreshTokenBundle\Event\RefreshAuthenticationFailureEvent;
-use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTExpiredEvent;
-use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTFailureEventInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\Routing\RouterInterface;
