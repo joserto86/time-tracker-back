@@ -5,127 +5,180 @@ namespace App\Controller;
 use App\Entity\Glquery\GlIssue;
 use App\Entity\Glquery\GlProject;
 use App\Entity\Glquery\GlTimeNote;
-use App\Entity\Glquery\User;
+use App\Model\TimeNote;
 use App\Repository\Glquery\GlProjectRepository;
-use Irontec\SymfonyTools\GetEntities\GetEntities;
+use App\Repository\Glquery\GlTimeNoteRepository;
+use App\Repository\Main\AppUserRepository;
+use App\Service\GitlabService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\SerializerInterface;
+
 
 #[Route('/api/user', name: 'user-', defaults: ['_format' => 'json'])]
-class UserController extends AbstractTimeTrackerController
+class UserController extends AbstractUserController
 {
-    #[Route(name: 'list', methods: ['GET'])]
-    public function list(Request $request): JsonResponse
-    {
-        try {
-            $users = $this->filtrateAndPaginate($request, User::class);
-
-            if ($users['count'] === 0) {
-                return $this->json([], Response::HTTP_NO_CONTENT);
-            }
-
-            return $this->json($users['items'], Response::HTTP_OK, ['X-Total-Items' => $users['count']]);
-        } catch (\LogicException $e) {
-            return $this->json($e->getMessage(), $e->getCode());
-        }
-    }
-
     #[Route(
-        path: '/{id}/project',
+        path: '/project',
         name: 'project-list',
-        defaults: [
-            '_api_resource_class' => User::class,
-        ],
         methods: ['GET'],
     )]
-    public function getUserProjects(User $user, Request $request, GlProjectRepository $repository): JsonResponse
+    public function getUserProjects(Request $request, GlProjectRepository $repository): JsonResponse
     {
-        try {
-            $result = $repository->getProjectsByUser($request, $user);
-
-            if ($result['count'] === 0) {
-                return $this->json([], Response::HTTP_NO_CONTENT);
-            }
-
-            return $this->json($result['items'], Response::HTTP_OK, ['X-Total-Items' => $result['count']], ['groups' => 'list']);
-        } catch (\LogicException $e) {
-            return $this->json($e->getMessage(), $e->getCode());
-        }
+        $user = $this->getGlUser();
+        return $this->getProjectsByUser($user, $request, $repository);
     }
 
     #[Route(
-        path: '/{id}/project/{project}/issue',
+        path: '/project/{project}/issue',
         name: 'project-issue-list',
         defaults: [
-            'id' => User::class,
             'project' => GlProject::class,
         ],
         methods: ['GET'],
     )]
-    public function getUserProjectIssues(User $user, GlProject $project, Request $request): JsonResponse
+    public function getUserProjectIssues(GlProject $project, Request $request): JsonResponse
     {
-        $where = [
-            [
-                GetEntities::PARAM_VALUE => $user->getUsername(),
-                GetEntities::PARAM_FIELD => 'assignee',
-            ], [
-                GetEntities::PARAM_VALUE => $user->getInstance(),
-                GetEntities::PARAM_FIELD => 'glInstance'
-            ], [
-                GetEntities::PARAM_VALUE => $project->getGlId(),
-                GetEntities::PARAM_FIELD => 'glProjectId'
-            ]
-        ];
+        $user = $this->getGlUser();
+        return $this->getIssuesByUserAndProject($user, $project, $request);
 
+    }
+
+    #[Route(
+        path: '/project/{project}/time-note',
+        name: 'project-time-note-list',
+        defaults: [
+            'project' => GlProject::class,
+        ],
+        methods: ['GET'],
+    )]
+    public function getUserProjectTimeNotes(GlProject $project, Request $request): JsonResponse
+    {
+        $user = $this->getGlUser();
+        return $this->getTimeNotesByUserAndProject($user, $project, $request);
+    }
+
+    #[Route(
+        path: '/time-note',
+        name: 'time-note-list',
+        methods: ['GET'],
+    )]
+    public function getUserTimeNotes(Request $request): JsonResponse
+    {
+        $user = $this->getGlUser();
+        return $this->getTimeNotesByUser($user, $request);
+    }
+
+    #[Route(
+        path: '/issue',
+        name: 'issue-list',
+        methods: ['GET'],
+    )]
+    public function getUserIssues(Request $request): JsonResponse
+    {
+        $user = $this->getGlUser();
+        return $this->getIssuesByUser($user, $request);
+    }
+
+    #[Route(
+        path: '/issue/{id}/time-note',
+        name: 'issue-time-note-list',
+        defaults: [
+            '_api_resource_class' => GlIssue::class,
+        ],
+        methods: ['GET'],
+    )]
+    public function getUserTimeNotesByIssue(GlIssue $issue, Request $request): JsonResponse
+    {
+        $user = $this->getGlUser();
+        return $this->getTimeNotesByUserAndIssue($user, $issue, $request);
+    }
+
+    #[Route(
+        path: '/issue/{id}/time-note',
+        name: 'issue-time-note-post',
+        defaults: [
+            '_api_resource_class' => GlIssue::class,
+        ],
+        methods: ['POST']
+    )]
+    public function postTimeNote(
+        GlIssue $issue,
+        Request $request,
+        GitlabService $service,
+        SerializerInterface $serializer,
+        AppUserRepository $repository
+    ): JsonResponse
+    {
         try {
-            $issues = $this->filtrateAndPaginate($request, GlIssue::class, $where);
+            $appUser = $repository->findOneBy(['username' => $this->getUser()->getUserIdentifier()]);
+            $timeNote = $serializer->deserialize($request->getContent(), TimeNote::class, JsonEncoder::FORMAT);
+            $data = $service->postTimeNote($issue, $appUser, $timeNote);
+            return $this->json($data, Response::HTTP_OK);
 
-            if ($issues['count'] === 0) {
-                return $this->json([], Response::HTTP_NO_CONTENT);
-            }
-
-            return $this->json($issues['items'], Response::HTTP_OK, ['X-Total-Items' => $issues['count']], ['groups' => 'list']);
-        } catch (\LogicException $e) {
-            return $this->json($e->getMessage(), $e->getCode());
+        } catch (\Exception $e) {
+            return $this->json([], Response::HTTP_BAD_REQUEST);
         }
     }
 
     #[Route(
-        path: '/{id}/project/{project}/time-note',
-        name: 'project-time-note-list',
+        path: '/issue/{issueId}/time-note/{id}',
+        name: 'issue-time-note-get',
         defaults: [
-            'id' => User::class,
-            'project' => GlProject::class,
+            'issueId' => GlIssue::class,
+            'id' => GlTimeNote::class
         ],
         methods: ['GET'],
     )]
-    public function getUserProjectTimeNotes(User $user, GlProject $project, Request $request): JsonResponse
+    public function getUserTimeNoteByIssueAndTimeNoteId(GlIssue $issue, GlTimeNote $timeNote, GlTimeNoteRepository $repository): JsonResponse
     {
-        $where = [
-            [
-                GetEntities::PARAM_VALUE => $user->getUsername(),
-                GetEntities::PARAM_FIELD => 'author',
-            ], [
-                GetEntities::PARAM_VALUE => $user->getInstance(),
-                GetEntities::PARAM_FIELD => 'glInstance'
-            ], [
-                GetEntities::PARAM_VALUE => $project->getGlId(),
-                GetEntities::PARAM_FIELD => 'glProjectId'
-            ]
-        ];
+        $user = $this->getGlUser();
+        $result = $repository->findOneBy([
+            'id' => $timeNote->getId(),
+            'glId' => $issue->getId(),
+            'author' => $user->getUsername(),
+            'glInstance' => $user->getInstance()
+        ]);
 
-        try {
-            $issues = $this->filtrateAndPaginate($request, GlTimeNote::class, $where);
-
-            if ($issues['count'] === 0) {
-                return $this->json([], Response::HTTP_NO_CONTENT);
-            }
-
-            return $this->json($issues['items'], Response::HTTP_OK, ['X-Total-Items' => $issues['count']], ['groups' => 'list']);
-        } catch (\LogicException $e) {
-            return $this->json($e->getMessage(), $e->getCode());
+        if ($result) {
+            return $this->json($result, Response::HTTP_OK);
         }
+
+        return  $this->json(null, Response::HTTP_NOT_FOUND);
     }
+
+
+
+//    #[Route(
+//        path: '/issue/{issueId}/time-note/{id}',
+//        name: 'issue-time-note-put',
+//        defaults: [
+//            'issueId' => GlIssue::class,
+//            'id' => GlTimeNote::class,
+//        ],
+//        methods: ['PUT']
+//    )]
+//    public function putTimeNote(
+//        GlIssue $issue,
+//        GlTimeNote $timeNote,
+//        Request $request,
+//        GitlabService $service,
+//        SerializerInterface $serializer,
+//        AppUserRepository $repository
+//    ) :JsonResponse
+//    {
+//        try {
+//            var_dump('muerte');die;
+//            $appUser = $repository->findOneBy(['username' => $this->getUser()->getUserIdentifier()]);
+//            $body = $serializer->deserialize($request->getContent(), TimeNote::class, JsonEncoder::FORMAT);
+//            $data = $service->postTimeNote($issue, $appUser, $timeNote);
+//            return $this->json($data, Response::HTTP_OK);
+//
+//        } catch (\Exception $e) {
+//            return $this->json([], Response::HTTP_BAD_REQUEST);
+//        }
+//    }
 }

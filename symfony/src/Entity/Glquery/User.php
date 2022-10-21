@@ -18,25 +18,25 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     operations: [
         new Get(
-            uriTemplate: '/user/{id}',
+            uriTemplate: '/admin/user/{id}',
             requirements: ['id' => '\d+'],
         ),
         new GetCollection(
-            routeName: 'user-list',
+            routeName: 'admin-user-list',
             name: 'list'
         ),
         new GetCollection(
-            routeName: 'user-project-list',
+            routeName: 'admin-user-project-list',
             read: 'id',
             name: 'project-list'
         ),
         new GetCollection(
-            routeName: 'user-project-issue-list',
+            routeName: 'admin-user-project-issue-list',
             read: 'id',
             name: 'project-issue-list'
         ),
         new GetCollection(
-            routeName: 'user-project-time-note-list',
+            routeName: 'admin-user-project-time-note-list',
             read: 'id',
             name: 'project-time-note-list'
         )

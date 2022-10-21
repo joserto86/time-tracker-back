@@ -16,7 +16,7 @@ abstract class AbstractTimeTrackerController extends AbstractController
 
     public function __construct(
         GetEntities $getEntitiesService,
-        UtilService $utilService
+        UtilService $utilService,
     ) {
         $this->getEntitiesService = $getEntitiesService;
         $this->utilService = $utilService;

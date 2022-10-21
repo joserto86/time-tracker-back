@@ -121,7 +121,7 @@ class GitlabService
     {
         $time = $timeNote->getTimeSeconds() / 3600;
         $date = '';
-        if ($timeNote->getDate()) {
+        if (!is_null($timeNote->getDate())) {
             $date = $timeNote->getDate()->format('Y-m-d');
         }
 
