@@ -39,6 +39,18 @@ services:
                   protocol_version: 3
                   referrals: false
 
+    App\Security\CustomLdapUserProvider:
+        arguments:
+            $em: '@doctrine.orm.entity_manager'
+            $ldap: '@Symfony\Component\Ldap\Ldap'
+            $baseDn: '%env(LDAP_BASE_DN)%'
+            $searchDn: '%env(LDAP_SEARCH_DN)%'
+            $searchPassword: '%env(LDAP_SEARCH_PASSWORD)%'
+            $filter: '%env(LDAP_SEARCH_DN_STRING)%'
+            $defaultRoles: [ROLE_USER]
+            $uidKey: uid
+            $extraFields: [ 'uid' ]
+
     time_tracker.event.authentication_success_listener:
         class: App\EventListener\AuthenticationSuccessListener
         arguments: ['@doctrine.orm.entity_manager']
