@@ -16,9 +16,8 @@ class AuthenticationSuccessListener
         $this->em = $em;
     }
 
-    public function onAuthenticationSuccessResponse(AuthenticationSuccessEvent $event)
+    public function onAuthenticationSuccessResponse(AuthenticationSuccessEvent $event): void
     {
-        $data = $event->getData();
         $user = $event->getUser();
 
         if (!$user instanceof LdapUser) {
@@ -29,12 +28,9 @@ class AuthenticationSuccessListener
         if (!$userLocal = $this->em->getRepository(AppUser::class)->findOneBy(['username' => $user->getUsername()])) {
             $userLocal = new AppUser();
             $userLocal->setUsername($user->getUsername());
+            $userLocal->setRoles($user->getRoles());
             $this->em->persist($userLocal);
             $this->em->flush();
-        } else {
-            //$data = (array_merge($data, ['instances' => $userLocal->getInstances()]));
         }
-
-        $event->setData($data);
     }
 }

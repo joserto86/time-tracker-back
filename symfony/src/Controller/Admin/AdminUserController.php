@@ -54,7 +54,7 @@ class AdminUserController extends AbstractUserController
     )]
     public function getUserProjectIssues(User $user, GlProject $project, Request $request): JsonResponse
     {
-       return $this->getIssuesByUserAndProject($user, $project, $request);
+        return $this->getIssuesByUserAndProject($user, $project, $request);
     }
 
     #[Route(
