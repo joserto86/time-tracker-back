@@ -17,6 +17,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new Get(
             uriTemplate: '/instance/{id}',
+            routeName: 'instance-item',
             requirements: ['id' => '\d+'],
         ),
         new GetCollection(

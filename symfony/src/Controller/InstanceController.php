@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Main\AppUser;
 use App\Entity\Main\AppUserInstance;
 use App\Entity\Main\Instance;
+use App\Model\Instance as InstanceModel;
 use App\Repository\Main\AppUserRepository;
 use App\Service\GitlabService;
 use App\Service\InstanceService;
@@ -18,16 +19,33 @@ use Symfony\Component\Routing\Annotation\Route;
 class InstanceController extends AbstractTimeTrackerController
 {
     #[Route(name: 'list', methods: ['GET'])]
-    public function index(Request $request) :JsonResponse
+    public function index(Request $request,  AppUserRepository $repository) :JsonResponse
     {
         try {
-            $result = $this->filtrateAndPaginate($request, Instance::class);
+            $user = $repository->findOneBy(['username' => $this->getUser()->getUserIdentifier()]);
+            $data = $this->filtrateAndPaginate($request, Instance::class);
 
-            if ($result['count'] === 0) {
+            if ($data['count'] === 0) {
                 return $this->json([], Response::HTTP_NO_CONTENT);
             }
 
-            return $this->json($result['items'], Response::HTTP_OK, ['X-Total-Items' => $result['count']], ['groups' => 'list']);
+            $arrayResult = [];
+            foreach ($data['items'] as $item) {
+                $arrayResult[] = $this->convert($item, $user);
+            }
+
+            return $this->json($arrayResult, Response::HTTP_OK, ['X-Total-Items' => $data['count']]);
+        } catch (\LogicException $e) {
+            return $this->json($e->getMessage(), $e->getCode());
+        }
+    }
+
+    #[Route(path: '/{id}', name: 'item', defaults: ['_api_resource_class' => Instance::class], methods: ['GET'])]
+    public function show(Instance $instance, AppUserRepository $repository): JsonResponse
+    {
+        try {
+           $user = $repository->findOneBy(['username' => $this->getUser()->getUserIdentifier()]);
+           return $this->json($this->convert($instance, $user), Response::HTTP_OK);
         } catch (\LogicException $e) {
             return $this->json($e->getMessage(), $e->getCode());
         }
@@ -53,7 +71,7 @@ class InstanceController extends AbstractTimeTrackerController
         $em->persist($appUserInstance);
         $em->flush();
 
-        return $this->json(null, Response::HTTP_NO_CONTENT);
+        return $this->json(null, Response::HTTP_CREATED);
     }
 
     #[Route(
@@ -93,5 +111,18 @@ class InstanceController extends AbstractTimeTrackerController
         } catch (\LogicException $e) {
             return $this->json($e->getMessage(), $e->getCode());
         }
+    }
+
+    private function convert(Instance $instance, AppUser $user) :InstanceModel
+    {
+        $result = new InstanceModel();
+        $result->setId($instance->getId())
+            ->setUrl($instance->getUrl())
+            ->setSetted(
+                (bool)sizeof(array_filter(
+                    $user->getAppUserInstances()->toArray(), fn(AppUserInstance $i) => $i->getInstance() === $instance))
+            );
+
+        return  $result;
     }
 }
