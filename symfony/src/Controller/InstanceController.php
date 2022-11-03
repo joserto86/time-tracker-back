@@ -18,16 +18,22 @@ use Symfony\Component\Routing\Annotation\Route;
 class InstanceController extends AbstractTimeTrackerController
 {
     #[Route(name: 'list', methods: ['GET'])]
-    public function index(Request $request) :JsonResponse
+    public function index(Request $request,  AppUserRepository $repository) :JsonResponse
     {
         try {
-            $result = $this->filtrateAndPaginate($request, Instance::class);
+            $data = $this->filtrateAndPaginate($request, Instance::class);
 
-            if ($result['count'] === 0) {
-                return $this->json([], Response::HTTP_NO_CONTENT);
-            }
+            return $this->json($data['items'], Response::HTTP_OK, ['X-Total-Items' => $data['count']]);
+        } catch (\LogicException $e) {
+            return $this->json($e->getMessage(), $e->getCode());
+        }
+    }
 
-            return $this->json($result['items'], Response::HTTP_OK, ['X-Total-Items' => $result['count']], ['groups' => 'list']);
+    #[Route(path: '/{id}', name: 'item', defaults: ['_api_resource_class' => Instance::class], methods: ['GET'])]
+    public function show(Instance $instance, AppUserRepository $repository): JsonResponse
+    {
+        try {
+           return $this->json($instance, Response::HTTP_OK);
         } catch (\LogicException $e) {
             return $this->json($e->getMessage(), $e->getCode());
         }
@@ -53,7 +59,7 @@ class InstanceController extends AbstractTimeTrackerController
         $em->persist($appUserInstance);
         $em->flush();
 
-        return $this->json(null, Response::HTTP_NO_CONTENT);
+        return $this->json(null, Response::HTTP_CREATED);
     }
 
     #[Route(
