@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Main\AppUser;
 use App\Entity\Main\AppUserInstance;
 use App\Entity\Main\Instance;
-use App\Model\Instance as InstanceModel;
 use App\Repository\Main\AppUserRepository;
 use App\Service\GitlabService;
 use App\Service\InstanceService;
@@ -22,19 +21,9 @@ class InstanceController extends AbstractTimeTrackerController
     public function index(Request $request,  AppUserRepository $repository) :JsonResponse
     {
         try {
-            $user = $repository->findOneBy(['username' => $this->getUser()->getUserIdentifier()]);
             $data = $this->filtrateAndPaginate($request, Instance::class);
 
-            if ($data['count'] === 0) {
-                return $this->json([], Response::HTTP_NO_CONTENT);
-            }
-
-            $arrayResult = [];
-            foreach ($data['items'] as $item) {
-                $arrayResult[] = $this->convert($item, $user);
-            }
-
-            return $this->json($arrayResult, Response::HTTP_OK, ['X-Total-Items' => $data['count']]);
+            return $this->json($data['items'], Response::HTTP_OK, ['X-Total-Items' => $data['count']]);
         } catch (\LogicException $e) {
             return $this->json($e->getMessage(), $e->getCode());
         }
@@ -44,8 +33,7 @@ class InstanceController extends AbstractTimeTrackerController
     public function show(Instance $instance, AppUserRepository $repository): JsonResponse
     {
         try {
-           $user = $repository->findOneBy(['username' => $this->getUser()->getUserIdentifier()]);
-           return $this->json($this->convert($instance, $user), Response::HTTP_OK);
+           return $this->json($instance, Response::HTTP_OK);
         } catch (\LogicException $e) {
             return $this->json($e->getMessage(), $e->getCode());
         }
@@ -111,18 +99,5 @@ class InstanceController extends AbstractTimeTrackerController
         } catch (\LogicException $e) {
             return $this->json($e->getMessage(), $e->getCode());
         }
-    }
-
-    private function convert(Instance $instance, AppUser $user) :InstanceModel
-    {
-        $result = new InstanceModel();
-        $result->setId($instance->getId())
-            ->setUrl($instance->getUrl())
-            ->setSetted(
-                (bool)sizeof(array_filter(
-                    $user->getAppUserInstances()->toArray(), fn(AppUserInstance $i) => $i->getInstance() === $instance))
-            );
-
-        return  $result;
     }
 }

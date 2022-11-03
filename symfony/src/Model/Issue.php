@@ -37,8 +37,6 @@ class Issue implements TimeTrackerModelInterface
 
     private ?string $author = null;
 
-    private ?string $data = null;
-
     private ?int $glId = null;
 
     /**
@@ -308,24 +306,6 @@ class Issue implements TimeTrackerModelInterface
     public function setAuthor(?string $author): Issue
     {
         $this->author = $author;
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getData(): ?string
-    {
-        return $this->data;
-    }
-
-    /**
-     * @param string|null $data
-     * @return Issue
-     */
-    public function setData(?string $data): Issue
-    {
-        $this->data = $data;
         return $this;
     }
 
