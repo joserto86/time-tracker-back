@@ -3,7 +3,11 @@
 namespace App\Repository\Glquery;
 
 use App\Entity\Glquery\User;
+use App\Entity\Main\AppUser;
+use App\Entity\Main\AppUserInstance;
+use App\Repository\Main\AppUserRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,8 +20,11 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class UserRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private AppUserRepository $appUserRepository;
+
+    public function __construct(ManagerRegistry $registry, AppUserRepository $appUserRepository)
     {
+        $this->appUserRepository = $appUserRepository;
         parent::__construct($registry, User::class);
     }
 
@@ -37,6 +44,22 @@ class UserRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function getGlUsersByUserName(string $userIdentifier): array
+    {
+        /** @var AppUser $appUser */
+        $appUser = $this->appUserRepository->findOneBy(['username' => $userIdentifier]);
+        $usernames = array_values(array_map(
+            fn(AppUserInstance $au) => $au->getUsername(), $appUser->getAppUserInstances()->toArray()
+        ));
+
+        return $this->createQueryBuilder('u')
+            ->select('u')
+            ->where('u.username IN (:usernames)')
+            ->setParameter('usernames', $usernames)
+            ->getQuery()
+            ->getResult();
     }
 
 //    /**

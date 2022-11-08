@@ -28,8 +28,8 @@ class UserController extends AbstractUserController
     )]
     public function getUserProjects(Request $request, GlProjectRepository $repository): JsonResponse
     {
-        $user = $this->getGlUser();
-        return $this->getProjectsByUser($user, $request, $repository);
+        $users = $this->getGlUsers();
+        return $this->getProjectsByUser($users, $request, $repository);
     }
 
     #[Route(
@@ -42,7 +42,7 @@ class UserController extends AbstractUserController
     )]
     public function getUserProjectIssues(GlProject $project, Request $request): JsonResponse
     {
-        $user = $this->getGlUser();
+        $user = $this->getGlUserByInstance($project->getGlInstance());
         return $this->getIssuesByUserAndProject($user, $project, $request);
 
     }
@@ -57,7 +57,7 @@ class UserController extends AbstractUserController
     )]
     public function getUserProjectTimeNotes(GlProject $project, Request $request): JsonResponse
     {
-        $user = $this->getGlUser();
+        $user = $this->getGlUserByInstance($project->getGlInstance());
         return $this->getTimeNotesByUserAndProject($user, $project, $request);
     }
 
@@ -68,8 +68,8 @@ class UserController extends AbstractUserController
     )]
     public function getUserTimeNotes(Request $request): JsonResponse
     {
-        $user = $this->getGlUser();
-        return $this->getTimeNotesByUser($user, $request);
+        $users = $this->getGlUsers();
+        return $this->getTimeNotesByUser($users, $request);
     }
 
     #[Route(
@@ -79,8 +79,8 @@ class UserController extends AbstractUserController
     )]
     public function getUserIssues(Request $request): JsonResponse
     {
-        $user = $this->getGlUser();
-        return $this->getIssuesByUser($user, $request);
+        $users = $this->getGlUsers();
+        return $this->getIssuesByUser($users, $request);
     }
 
     #[Route(
@@ -93,7 +93,7 @@ class UserController extends AbstractUserController
     )]
     public function getUserTimeNotesByIssue(GlIssue $issue, Request $request): JsonResponse
     {
-        $user = $this->getGlUser();
+        $user = $this->getGlUserByInstance($issue->getGlInstance());
         return $this->getTimeNotesByUserAndIssue($user, $issue, $request);
     }
 
@@ -135,7 +135,7 @@ class UserController extends AbstractUserController
     )]
     public function getUserTimeNoteByIssueAndTimeNoteId(GlIssue $issue, GlTimeNote $timeNote, GlTimeNoteRepository $repository): JsonResponse
     {
-        $user = $this->getGlUser();
+        $user = $this->getGlUserByInstance($issue->getGlInstance());
         $result = $repository->findOneBy([
             'id' => $timeNote->getId(),
             'glId' => $issue->getId(),

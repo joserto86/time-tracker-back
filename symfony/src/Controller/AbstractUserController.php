@@ -24,15 +24,23 @@ class AbstractUserController extends AbstractTimeTrackerController
         parent::__construct($getEntitiesService, $utilService);
     }
 
-    protected function getGlUser() :?User
+    protected function getGlUsers() :array
     {
-        return $this->userRepository->findOneBy(['username' => $this->getUser()->getUserIdentifier()]);
+        return $this->userRepository->getGlUsersByUserName($this->getUser()->getUserIdentifier());
     }
 
-    protected function getProjectsByUser(User $user, Request $request, GlProjectRepository $repository): JsonResponse
+    protected function getGlUserByInstance(string $instance): ?User
+    {
+        return $this->userRepository->findOneBy([
+            'username' => $this->getUser()->getUserIdentifier(),
+            'instance' => $instance
+        ]);
+    }
+
+    protected function getProjectsByUser(array $users, Request $request, GlProjectRepository $repository): JsonResponse
     {
         try {
-            $result = $repository->getProjectsByUser($request, $user);
+            $result = $repository->getProjectsByUser($request, $users);
 
             if ($result['count'] === 0) {
                 return $this->json([], Response::HTTP_NO_CONTENT);
@@ -100,17 +108,21 @@ class AbstractUserController extends AbstractTimeTrackerController
         }
     }
 
-    protected function getTimeNotesByUser(User $user, Request $request): JsonResponse
+    protected function getTimeNotesByUser(array $users, Request $request): JsonResponse
     {
-        $where = [
-            [
+        $where = [];
+
+        /** @var User $user */
+        foreach ($users as $user) {
+            $where[] = [
                 GetEntities::PARAM_VALUE => $user->getUsername(),
                 GetEntities::PARAM_FIELD => 'author',
-            ], [
+            ];
+            $where[] = [
                 GetEntities::PARAM_VALUE => $user->getInstance(),
                 GetEntities::PARAM_FIELD => 'glInstance'
-            ]
-        ];
+            ];
+        }
 
         try {
             $issues = $this->filtrateAndPaginate($request, GlTimeNote::class, $where);
@@ -125,17 +137,21 @@ class AbstractUserController extends AbstractTimeTrackerController
         }
     }
 
-    protected function getIssuesByUser(User $user, Request $request): JsonResponse
+    protected function getIssuesByUser(array $users, Request $request): JsonResponse
     {
-        $where = [
-            [
+        $where = [];
+
+        /** @var User $user */
+        foreach ($users as $user) {
+            $where[] = [
                 GetEntities::PARAM_VALUE => $user->getUsername(),
                 GetEntities::PARAM_FIELD => 'assignee',
-            ], [
+            ];
+            $where[] = [
                 GetEntities::PARAM_VALUE => $user->getInstance(),
                 GetEntities::PARAM_FIELD => 'glInstance'
-            ]
-        ];
+            ];
+        }
 
         try {
             $issues = $this->filtrateAndPaginate($request, GlIssue::class, $where);

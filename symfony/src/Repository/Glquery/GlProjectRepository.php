@@ -49,7 +49,7 @@ class GlProjectRepository extends ServiceEntityRepository
         }
     }
 
-    public function getProjectsByUser(Request $request, User $user): array
+    public function getProjectsByUser(Request $request, array $users): array
     {
         $page = intval($request->get('page', 1));
         $limit = (int)$request->get('limit', -1);
@@ -57,8 +57,8 @@ class GlProjectRepository extends ServiceEntityRepository
         $where = $this->getEntitiesService->parseWhere($request->get('where', '{}'));
         $order = $this->getEntitiesService->prepareOrder($request->get('order'));
 
-        $cQB = $this->getProjectsByUserQueryBuilder($user);
-        $cQBCount = $this->getProjectsByUserQueryBuilder($user, false);
+        $cQB = $this->getProjectsByUserQueryBuilder($users);
+        $cQBCount = $this->getProjectsByUserQueryBuilder($users, false);
 
         if (!empty($where)) {
             $cQB = $this->getEntitiesService->where($cQB, $this->getEntitiesService->getAlias(GlProject::class), $where);
@@ -78,16 +78,19 @@ class GlProjectRepository extends ServiceEntityRepository
         ];
     }
 
-    protected function getProjectsByUserQueryBuilder(User $user, bool $groupBy = true) :QueryBuilder
+    protected function getProjectsByUserQueryBuilder(array $users, bool $groupBy = true) :QueryBuilder
     {
-        $cQB = $this->createQueryBuilder('p')
-            ->select('p')
+        $userNames = array_values(array_map(fn(User $u) => $u->getUsername(), $users));
+        $userInstances = array_values(array_map(fn(User $u) => $u->getInstance(), $users));
+
+        $cQB = $this->createQueryBuilder('p');
+        $cQB->select('p')
             ->join(GlTimeNote::class, 'tn', Join::WITH, 'p.glId = tn.glProjectId AND p.glInstance = tn.glInstance')
             ->join(User::class, 'u', Join::WITH, 'tn.author = u.username AND tn.glInstance = u.instance')
-            ->where('u.username =:username')
-            ->andWhere('u.instance =:instance')
-            ->setParameter('username', $user->getUsername())
-            ->setParameter('instance', $user->getInstance());
+            ->where($cQB->expr()->in('u.username', ':usernames'))
+            ->andWhere($cQB->expr()->in('u.instance', ':instances'))
+            ->setParameter('usernames', $userNames)
+            ->setParameter('instances', $userInstances);
 
         if ($groupBy) {
             $cQB->groupBy('p');
