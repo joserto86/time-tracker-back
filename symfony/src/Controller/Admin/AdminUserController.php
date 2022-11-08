@@ -3,9 +3,9 @@
 namespace App\Controller\Admin;
 
 use App\Controller\AbstractUserController;
-use App\Entity\Glquery\GlProject;;
+use App\Entity\Glquery\GlProject;
 use App\Entity\Glquery\User;
-use App\Repository\Glquery\GlProjectRepository;;
+use App\Repository\Glquery\GlProjectRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,7 +40,7 @@ class AdminUserController extends AbstractUserController
     )]
     public function getUserProjects(User $user, Request $request, GlProjectRepository $repository): JsonResponse
     {
-        return $this->getProjectsByUser($user, $request, $repository);
+        return $this->getProjectsByUser([$user], $request, $repository);
     }
 
     #[Route(
@@ -81,7 +81,7 @@ class AdminUserController extends AbstractUserController
     )]
     public function getUserTimeNotes(User $user, Request $request): JsonResponse
     {
-        return $this->getTimeNotesByUser($user, $request);
+        return $this->getTimeNotesByUser([$user], $request);
     }
 
     #[Route(
@@ -94,6 +94,6 @@ class AdminUserController extends AbstractUserController
     )]
     public function getUserIssues(User $user, Request $request): JsonResponse
     {
-        return $this->getIssuesByUser($user, $request);
+        return $this->getIssuesByUser([$user], $request);
     }
 }

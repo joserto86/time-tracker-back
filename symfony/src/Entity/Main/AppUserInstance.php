@@ -15,6 +15,7 @@ class AppUserInstance
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[ORM\JoinColumn(nullable: true)]
     #[Encrypted]
     private ?string $token = null;
 
@@ -25,6 +26,9 @@ class AppUserInstance
     #[ORM\ManyToOne(inversedBy: 'AppUserInstances')]
     #[ORM\JoinColumn(nullable: false)]
     private ?AppUser $appUser = null;
+
+    #[ORM\Column(length: 50)]
+    private ?string $username = null;
 
     public function getId(): ?int
     {
@@ -63,6 +67,18 @@ class AppUserInstance
     public function setAppUser(?AppUser $appUser): self
     {
         $this->appUser = $appUser;
+
+        return $this;
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(string $username): self
+    {
+        $this->username = $username;
 
         return $this;
     }
