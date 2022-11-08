@@ -135,7 +135,7 @@ class UserController extends AbstractUserController
     )]
     public function getUserTimeNoteByIssueAndTimeNoteId(GlIssue $issue, GlTimeNote $timeNote, GlTimeNoteRepository $repository): JsonResponse
     {
-        $user = $this->getGlUser();
+        $user = $this->getGlUserByInstance($issue->getGlInstance());
         $result = $repository->findOneBy([
             'id' => $timeNote->getId(),
             'glId' => $issue->getId(),

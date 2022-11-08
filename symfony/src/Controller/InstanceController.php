@@ -3,13 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Main\AppUser;
-use App\Entity\Main\AppUserInstance;
 use App\Entity\Main\Instance;
 use App\Repository\Main\AppUserRepository;
 use App\Service\GitlabService;
 use App\Service\InstanceService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -39,27 +39,19 @@ class InstanceController extends AbstractTimeTrackerController
         }
     }
 
-    #[Route(path: '/{id}', name: 'post-token', defaults: ['_api_resource_class' => Instance::class], methods: ['POST'])]
+
+
+    #[Route(path: '/{id}', name: 'update', defaults: ['_api_resource_class' => Instance::class], methods: ['PUT', 'PATCH'])]
     public function postToken(Instance $instance, Request $request, EntityManagerInterface $em, InstanceService $service): JsonResponse
     {
-        $user = $em->getRepository(AppUser::class)->findOneBy(['username' => $this->getUser()->getUserIdentifier()]);
-        $token = $request->request->get('token');
-
-        $appUserInstance = $service->getAppUserInstance($instance, $user);
-
-        if ($appUserInstance) {
-            $appUserInstance->setToken($token);
-        } else {
-            $appUserInstance = new AppUserInstance();
-            $appUserInstance->setToken($token)->setInstance($instance);
-            $user->addAppUserInstance($appUserInstance);
-            $em->persist($user);
+        try {
+            $user = $em->getRepository(AppUser::class)->findOneBy(['username' => $this->getUser()->getUserIdentifier()]);
+            $service->update($user, $instance, new ParameterBag($request->request->all()));
+            return $this->json(null, Response::HTTP_NO_CONTENT);
+        } catch (\LogicException $e) {
+            return $this->json($e->getMessage(), $e->getCode());
         }
 
-        $em->persist($appUserInstance);
-        $em->flush();
-
-        return $this->json(null, Response::HTTP_CREATED);
     }
 
     #[Route(

@@ -9,7 +9,6 @@ use App\Entity\Glquery\User;
 use App\Repository\Glquery\GlProjectRepository;
 use App\Repository\Glquery\UserRepository;
 use App\Service\UtilService;
-use Doctrine\Common\Collections\Collection;
 use Irontec\SymfonyTools\GetEntities\GetEntities;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

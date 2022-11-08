@@ -6,7 +6,6 @@ use App\Entity\Glquery\GlProject;
 use App\Entity\Glquery\GlTimeNote;
 use App\Entity\Glquery\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
