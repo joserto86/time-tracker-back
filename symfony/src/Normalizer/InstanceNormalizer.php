@@ -32,13 +32,15 @@ class InstanceNormalizer extends AbstractNormalizer implements NormalizerInterfa
             'url'   => $object->getUrl(),
         ];
 
-        if (sizeof($user->getAppUserInstances()) === 0) {
+        $appUserInstance = array_values(array_filter(
+            $user->getAppUserInstances()->toArray(), fn(AppUserInstance $i) => $i->getInstance() === $object
+        ));
+
+        if (empty($appUserInstance)) {
            return $result;
         }
 
-        $appUserInstance = array_values(array_filter(
-            $user->getAppUserInstances()->toArray(), fn(AppUserInstance $i) => $i->getInstance() === $object
-        ))[0];
+        $appUserInstance = $appUserInstance[0];
 
         $result['username'] = $appUserInstance->getUsername();
         $result['added'] = !empty($appUserInstance->getToken());
