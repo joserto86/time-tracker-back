@@ -42,6 +42,7 @@ class InstanceService
             if (!$entity) {
                 $entity = new AppUserInstance();
                 $entity->setUsername($user->getUsername());
+                $entity->setInstance($instance);
                 $user->addAppUserInstance($entity);
                 $this->em->persist($user);
                 $persist = true;
