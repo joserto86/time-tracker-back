@@ -27,17 +27,22 @@ class InstanceNormalizer extends AbstractNormalizer implements NormalizerInterfa
         $user = $this->em->getRepository(AppUser::class)
             ->findOneBy(['username' => $this->tokenStorage->getToken()->getUserIdentifier()]);
 
+        $result = [
+            'id'    => $object->getId(),
+            'url'   => $object->getUrl(),
+        ];
+
+        if (empty($user->getAppUserInstances())) {
+           return $result;
+        }
 
         $appUserInstance = array_values(array_filter(
             $user->getAppUserInstances()->toArray(), fn(AppUserInstance $i) => $i->getInstance() === $object
         ))[0];
 
-        return [
-            'id'    => $object->getId(),
-            'url'   => $object->getUrl(),
-            'username' => $appUserInstance->getUsername(),
-            'added' => !empty($appUserInstance->getToken())
-        ];
+        $result['username'] = $appUserInstance->getUsername();
+        $result['added'] = !empty($appUserInstance->getToken());
+        return $result;
     }
 
     public function supportsNormalization(mixed $data, string $format = null)
