@@ -32,7 +32,7 @@ class InstanceNormalizer extends AbstractNormalizer implements NormalizerInterfa
             'url'   => $object->getUrl(),
         ];
 
-        if (empty($user->getAppUserInstances())) {
+        if (sizeof($user->getAppUserInstances()) === 0) {
            return $result;
         }
 
