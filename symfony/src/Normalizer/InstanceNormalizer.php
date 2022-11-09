@@ -28,9 +28,9 @@ class InstanceNormalizer extends AbstractNormalizer implements NormalizerInterfa
             ->findOneBy(['username' => $this->tokenStorage->getToken()->getUserIdentifier()]);
 
 
-        $appUserInstance = array_filter(
+        $appUserInstance = array_values(array_filter(
             $user->getAppUserInstances()->toArray(), fn(AppUserInstance $i) => $i->getInstance() === $object
-        )[0];
+        ))[0];
 
         return [
             'id'    => $object->getId(),
