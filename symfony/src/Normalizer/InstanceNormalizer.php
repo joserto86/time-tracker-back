@@ -23,14 +23,20 @@ class InstanceNormalizer extends AbstractNormalizer implements NormalizerInterfa
     {
         /** @var $object Instance */
 
+        /** @var AppUser $user */
         $user = $this->em->getRepository(AppUser::class)
             ->findOneBy(['username' => $this->tokenStorage->getToken()->getUserIdentifier()]);
+
+
+        $appUserInstance = array_filter(
+            $user->getAppUserInstances()->toArray(), fn(AppUserInstance $i) => $i->getInstance() === $object
+        )[0];
 
         return [
             'id'    => $object->getId(),
             'url'   => $object->getUrl(),
-            'added' => (bool)sizeof(array_filter(
-                $user->getAppUserInstances()->toArray(), fn(AppUserInstance $i) => $i->getInstance() === $object))
+            'username' => $appUserInstance->getUsername(),
+            'added' => !empty($appUserInstance->getToken())
         ];
     }
 
