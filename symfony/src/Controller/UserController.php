@@ -29,6 +29,9 @@ class UserController extends AbstractUserController
     public function getUserProjects(Request $request, GlProjectRepository $repository): JsonResponse
     {
         $users = $this->getGlUsers();
+        if (empty($users)) {
+            return $this->json([], Response::HTTP_OK, ['X-Total-Items' => 0], ['groups' => 'list']);
+        }
         return $this->getProjectsByUser($users, $request, $repository);
     }
 
@@ -69,6 +72,10 @@ class UserController extends AbstractUserController
     public function getUserTimeNotes(Request $request): JsonResponse
     {
         $users = $this->getGlUsers();
+        if (empty($users)) {
+            return $this->json([], Response::HTTP_OK, ['X-Total-Items' => 0], ['groups' => 'list']);
+        }
+
         return $this->getTimeNotesByUser($users, $request);
     }
 
@@ -80,6 +87,10 @@ class UserController extends AbstractUserController
     public function getUserIssues(Request $request): JsonResponse
     {
         $users = $this->getGlUsers();
+        if (empty($users)) {
+            return $this->json([], Response::HTTP_OK, ['X-Total-Items' => 0], ['groups' => 'list']);
+        }
+
         return $this->getIssuesByUser($users, $request);
     }
 
