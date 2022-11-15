@@ -27,9 +27,6 @@ class AppUserInstance
     #[ORM\JoinColumn(nullable: false)]
     private ?AppUser $appUser = null;
 
-    #[ORM\Column(length: 50)]
-    private ?string $username = null;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -67,18 +64,6 @@ class AppUserInstance
     public function setAppUser(?AppUser $appUser): self
     {
         $this->appUser = $appUser;
-
-        return $this;
-    }
-
-    public function getUsername(): ?string
-    {
-        return $this->username;
-    }
-
-    public function setUsername(?string $username): self
-    {
-        $this->username = $username;
 
         return $this;
     }

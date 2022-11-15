@@ -27,7 +27,7 @@ class AbstractUserController extends AbstractTimeTrackerController
 
     protected function getGlUsers() :array
     {
-        return $this->userRepository->getGlUsersByUserName($this->getUser()->getUserIdentifier());
+        return $this->userRepository->findBy(['ldapUser' => $this->getUser()->getUserIdentifier()]);
     }
 
     protected function getGlUserByInstance(string $instance): ?User

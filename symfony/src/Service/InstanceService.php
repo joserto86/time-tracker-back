@@ -41,7 +41,6 @@ class InstanceService
             $entity = $this->getAppUserInstance($instance, $user);
             if (!$entity) {
                 $entity = new AppUserInstance();
-                $entity->setUsername($user->getUsername());
                 $entity->setInstance($instance);
                 $user->addAppUserInstance($entity);
                 $this->em->persist($user);
@@ -50,11 +49,6 @@ class InstanceService
 
             if ($data->has('token')) {
                 $entity->setToken($data->get('token'));
-                $persist = true;
-            }
-
-            if ($data->has('username')) {
-                $entity->setUsername($data->get('username'));
                 $persist = true;
             }
 

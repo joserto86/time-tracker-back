@@ -67,6 +67,10 @@ class User
     #[Groups(['list'])]
     private ?string $team = null;
 
+    #[ORM\Column(name: 'ldapuser', length: 200, nullable: true)]
+    #[Groups(['list'])]
+    private ?string $ldapUser = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -116,6 +120,18 @@ class User
     public function setTeam(?string $team): self
     {
         $this->team = $team;
+
+        return $this;
+    }
+
+    public function getLdapUser(): ?string
+    {
+        return $this->ldapUser;
+    }
+
+    public function setLdapUser(?string $ldapUser): self
+    {
+        $this->ldapUser = $ldapUser;
 
         return $this;
     }

@@ -50,13 +50,6 @@ class AuthenticationSuccessListener
 
                 $flush = true;
             }
-
-            if (!$appUserInstance->getUsername()) {
-                $appUserInstance->setUsername($userLocal->getUsername());
-                $this->em->persist($appUserInstance);
-
-                $flush = true;
-            }
         }
 
         if ($flush) {
