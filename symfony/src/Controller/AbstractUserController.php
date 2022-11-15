@@ -6,6 +6,7 @@ use App\Entity\Glquery\GlIssue;
 use App\Entity\Glquery\GlProject;
 use App\Entity\Glquery\GlTimeNote;
 use App\Entity\Glquery\User;
+use App\Entity\Glquery\ViewGlTimeNote;
 use App\Repository\Glquery\GlProjectRepository;
 use App\Repository\Glquery\UserRepository;
 use App\Service\UtilService;
@@ -125,7 +126,7 @@ class AbstractUserController extends AbstractTimeTrackerController
         }
 
         try {
-            $issues = $this->filtrateAndPaginate($request, GlTimeNote::class, $where);
+            $issues = $this->filtrateAndPaginate($request, ViewGlTimeNote::class, $where);
 
             if ($issues['count'] === 0) {
                 return $this->json([], Response::HTTP_NO_CONTENT);
