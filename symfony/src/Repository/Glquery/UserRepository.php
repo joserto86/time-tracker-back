@@ -46,22 +46,6 @@ class UserRepository extends ServiceEntityRepository
         }
     }
 
-    public function getGlUsersByUserName(string $userIdentifier): array
-    {
-        /** @var AppUser $appUser */
-        $appUser = $this->appUserRepository->findOneBy(['username' => $userIdentifier]);
-        $usernames = array_values(array_map(
-            fn(AppUserInstance $au) => $au->getUsername(), $appUser->getAppUserInstances()->toArray()
-        ));
-
-        return $this->createQueryBuilder('u')
-            ->select('u')
-            ->where('u.username IN (:usernames)')
-            ->setParameter('usernames', $usernames)
-            ->getQuery()
-            ->getResult();
-    }
-
 //    /**
 //     * @return User[] Returns an array of User objects
 //     */

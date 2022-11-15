@@ -42,7 +42,6 @@ class InstanceNormalizer extends AbstractNormalizer implements NormalizerInterfa
 
         $appUserInstance = $appUserInstance[0];
 
-        $result['username'] = $appUserInstance->getUsername();
         $result['added'] = !empty($appUserInstance->getToken());
         return $result;
     }
