@@ -3194,11 +3194,11 @@
         },
         {
             "name": "symfony-tools/get-entities",
-            "version": "1.0.3",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://git.irontec.com/symfony-tools/get-entities.git",
-                "reference": "2f775635280f47f2f3298eae3dc08a49d2a4183e"
+                "reference": "99a2ec180c75e286de7a116565e89f212279146a"
             },
             "require": {
                 "doctrine/orm": "*",
@@ -8053,5 +8053,5 @@
         "ext-iconv": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }
