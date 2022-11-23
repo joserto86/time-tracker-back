@@ -5,6 +5,7 @@ namespace App\Entity\Main;
 use App\Repository\Main\AppUserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -25,6 +26,9 @@ class AppUser implements UserInterface, JWTUserInterface
 
     #[ORM\OneToMany(mappedBy: 'appUser', targetEntity: AppUserInstance::class)]
     private Collection $appUserInstances;
+
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $filters = [];
 
     public function __construct()
     {
@@ -118,6 +122,18 @@ class AppUser implements UserInterface, JWTUserInterface
                 $appUserInstance->setAppUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getFilters(): array
+    {
+        return $this->filters ?? [];
+    }
+
+    public function setFilters(?array $filters): self
+    {
+        $this->filters = $filters;
 
         return $this;
     }
