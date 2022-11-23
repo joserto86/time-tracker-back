@@ -46,18 +46,15 @@ class FiltersController extends AbstractController
         try {
             if ($user = $repository->findOneBy(['username' => $this->getUser()->getUserIdentifier()])) {
                 $filtersRequest = json_decode($request->getContent());
-                $filters = [];
                 foreach ($filtersRequest as $item) {
                     /** @var Filter $filter */
                     $filter = $serializer->deserialize(json_encode($item), Filter::class, JsonEncoder::FORMAT);
-                    if ($filter->isValid()) {
-                        $filters[] = $serializer->deserialize(json_encode($item), Filter::class, JsonEncoder::FORMAT);
-                    } else {
+                    if (!$filter->isValid()) {
                         throw new LogicException('Invalid filters data', Response::HTTP_BAD_REQUEST);
                     }
                 }
 
-                $user->setFilters($filters);
+                $user->setFilters($filtersRequest);
                 $em->persist($user);
                 $em->flush();
 
@@ -82,6 +79,8 @@ class FiltersController extends AbstractController
             $user->setFilters(null);
             $em->persist($user);
             $em->flush();
+
+            return $this->json([],  Response::HTTP_OK);
         }
 
         return $this->json([], Response::HTTP_NOT_FOUND);
