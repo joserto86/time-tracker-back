@@ -93,9 +93,9 @@ class ViewGlTimeNote
     #[Groups(['list'])]
     private ?string $milestone = null;
 
-    #[ORM\Column(type: Types::JSON, nullable: true)]
+    #[ORM\Column(nullable: true)]
     #[Groups(['list'])]
-    private ?array $labels = null;
+    private ?string $labels = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['list'])]
@@ -335,12 +335,12 @@ class ViewGlTimeNote
         return $this;
     }
 
-    public function getLabels(): ?array
+    public function getLabels(): ?string
     {
         return $this->labels;
     }
 
-    public function setLabels(?array $labels): self
+    public function setLabels(?string $labels): self
     {
         $this->labels = $labels;
 
