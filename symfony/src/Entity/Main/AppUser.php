@@ -30,6 +30,9 @@ class AppUser implements UserInterface, JWTUserInterface
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $filters = [];
 
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?string $profile = null;
+
     public function __construct()
     {
         $this->appUserInstances = new ArrayCollection();
@@ -134,6 +137,18 @@ class AppUser implements UserInterface, JWTUserInterface
     public function setFilters(?array $filters): self
     {
         $this->filters = $filters;
+
+        return $this;
+    }
+
+    public function getProfile(): string
+    {
+        return $this->profile ?? '{}';
+    }
+
+    public function setProfile(?string $profile): self
+    {
+        $this->profile = $profile;
 
         return $this;
     }
