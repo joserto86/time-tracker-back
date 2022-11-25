@@ -21,7 +21,11 @@ class ProfileController extends AbstractController
     public function index(AppUserRepository $repository): JsonResponse
     {
         if ($user = $repository->findOneBy(['username' => $this->getUser()->getUserIdentifier()])) {
-            return $this->json(json_decode($user->getProfile()),  Response::HTTP_OK);
+            if ($result = $user->getProfile()) {
+                return $this->json(json_decode($user->getProfile()),  Response::HTTP_OK);
+            }
+
+            return $this->json(null,  Response::HTTP_OK);
         }
 
         return $this->json([], Response::HTTP_NOT_FOUND);

@@ -141,9 +141,9 @@ class AppUser implements UserInterface, JWTUserInterface
         return $this;
     }
 
-    public function getProfile(): string
+    public function getProfile(): ?string
     {
-        return $this->profile ?? '{}';
+        return $this->profile;
     }
 
     public function setProfile(?string $profile): self
