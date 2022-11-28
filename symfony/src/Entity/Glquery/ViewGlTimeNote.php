@@ -33,6 +33,10 @@ class ViewGlTimeNote
     #[Groups(['list'])]
     private ?int $glIssueId = null;
 
+    #[ORM\Column]
+    #[Groups(['list'])]
+    private ?int $issueId = null;
+
     #[ORM\Column(length: 200)]
     #[Groups(['list'])]
     private ?string $body = null;
@@ -150,6 +154,18 @@ class ViewGlTimeNote
     public function setGlIssueId(int $glIssueId): self
     {
         $this->glIssueId = $glIssueId;
+
+        return $this;
+    }
+
+    public function getIssueId(): ?int
+    {
+        return $this->issueId;
+    }
+
+    public function setIssueId(int $issueId): self
+    {
+        $this->issueId = $issueId;
 
         return $this;
     }
