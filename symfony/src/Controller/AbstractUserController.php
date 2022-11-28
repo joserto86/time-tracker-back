@@ -129,7 +129,7 @@ class AbstractUserController extends AbstractTimeTrackerController
             $issues = $this->filtrateAndPaginate($request, ViewGlTimeNote::class, $where);
 
             if ($issues['count'] === 0) {
-                return $this->json([], Response::HTTP_NO_CONTENT);
+                return $this->json([], Response::HTTP_OK);
             }
 
             return $this->json($issues['items'], Response::HTTP_OK, ['X-Total-Items' => $issues['count']], ['groups' => 'list']);
