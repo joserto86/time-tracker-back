@@ -6,6 +6,7 @@ use App\Entity\Glquery\GlIssue;
 use App\Entity\Glquery\GlProject;
 use App\Entity\Glquery\GlTimeNote;
 use App\Model\TimeNote;
+use App\Repository\Glquery\GlIssueRepository;
 use App\Repository\Glquery\GlProjectRepository;
 use App\Repository\Glquery\GlTimeNoteRepository;
 use App\Repository\Main\AppUserRepository;
@@ -139,57 +140,102 @@ class UserController extends AbstractUserController
         path: '/issue/{issueId}/time-note/{id}',
         name: 'issue-time-note-get',
         defaults: [
-            'issueId' => GlIssue::class,
             'id' => GlTimeNote::class
         ],
         methods: ['GET'],
     )]
-    public function getUserTimeNoteByIssueAndTimeNoteId(GlIssue $issue, GlTimeNote $timeNote, GlTimeNoteRepository $repository): JsonResponse
+    public function getUserTimeNoteByIssueAndTimeNoteId(
+        int $issueId,
+        GlTimeNote $timeNote,
+        GlTimeNoteRepository $repository,
+        GlIssueRepository $glIssueRepository
+    ): JsonResponse
     {
-        $user = $this->getGlUserByInstance($issue->getGlInstance());
-        $result = $repository->findOneBy([
-            'id' => $timeNote->getId(),
-            'glId' => $issue->getId(),
-            'author' => $user->getUsername(),
-            'glInstance' => $user->getInstance()
-        ]);
+        $issue = $glIssueRepository->find($issueId);
 
-        if ($result) {
-            return $this->json($result, Response::HTTP_OK);
+        if ($issue) {
+            $user = $this->getGlUserByInstance($issue->getGlInstance());
+            $result = $repository->findOneBy([
+                'id' => $timeNote->getId(),
+                'glIssueId' => $issue->getGlId(),
+                'author' => $user->getUsername(),
+                'glInstance' => $user->getInstance()
+            ]);
+
+            if ($result) {
+                return $this->json($result, Response::HTTP_OK);
+            }
         }
 
-        return  $this->json(null, Response::HTTP_NOT_FOUND);
+        return  $this->json([], Response::HTTP_NOT_FOUND);
     }
 
+    #[Route(
+        path: '/issue/{issueId}/time-note/{id}',
+        name: 'issue-time-note-put',
+        defaults: [
+            'id' => GlTimeNote::class,
+        ],
+        methods: ['PUT']
+    )]
+    public function putTimeNote(
+        int $issueId,
+        GlTimeNote $timeNote,
+        Request $request,
+        GitlabService $service,
+        SerializerInterface $serializer,
+        AppUserRepository $repository,
+        GlIssueRepository $glIssueRepository,
+    ) :JsonResponse
+    {
+        try {
+            $user = $this->getGlUserByInstance($timeNote->getGlInstance());
+            $appUser = $repository->findOneBy(['username' => $this->getUser()->getUserIdentifier()]);
 
+            if ($user->getUsername() === $timeNote->getAuthor()) {
+                $issue = $glIssueRepository->find($issueId);
+                $body = $serializer->deserialize($request->getContent(), TimeNote::class, JsonEncoder::FORMAT);
+                $data = $service->putTimeNote($issue, $appUser, $body, $timeNote);
+                return $this->json($data, Response::HTTP_OK);
+            }
 
-//    #[Route(
-//        path: '/issue/{issueId}/time-note/{id}',
-//        name: 'issue-time-note-put',
-//        defaults: [
-//            'issueId' => GlIssue::class,
-//            'id' => GlTimeNote::class,
-//        ],
-//        methods: ['PUT']
-//    )]
-//    public function putTimeNote(
-//        GlIssue $issue,
-//        GlTimeNote $timeNote,
-//        Request $request,
-//        GitlabService $service,
-//        SerializerInterface $serializer,
-//        AppUserRepository $repository
-//    ) :JsonResponse
-//    {
-//        try {
-//            var_dump('muerte');die;
-//            $appUser = $repository->findOneBy(['username' => $this->getUser()->getUserIdentifier()]);
-//            $body = $serializer->deserialize($request->getContent(), TimeNote::class, JsonEncoder::FORMAT);
-//            $data = $service->postTimeNote($issue, $appUser, $timeNote);
-//            return $this->json($data, Response::HTTP_OK);
-//
-//        } catch (\Exception $e) {
-//            return $this->json([], Response::HTTP_BAD_REQUEST);
-//        }
-//    }
+            return $this->json('Can\'t update TimeNote of another person', Response::HTTP_UNAUTHORIZED);
+
+        } catch (\Exception $e) {
+            return $this->json($e->getMessage(), Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    #[Route(
+        path: '/issue/{issueId}/time-note/{id}',
+        name: 'issue-time-note-delete',
+        defaults: [
+            'id' => GlTimeNote::class,
+        ],
+        methods: ['DELETE']
+    )]
+    public function deleteTimeNote(
+        int $issueId,
+        GlTimeNote $timeNote,
+        GitlabService $service,
+        AppUserRepository $repository,
+        GlIssueRepository $glIssueRepository,
+    ) :JsonResponse
+    {
+        try {
+            $user = $this->getGlUserByInstance($timeNote->getGlInstance());
+            $appUser = $repository->findOneBy(['username' => $this->getUser()->getUserIdentifier()]);
+
+            if ($user->getUsername() === $timeNote->getAuthor()) {
+                $issue = $glIssueRepository->find($issueId);
+                $data = $service->deleteTimeNote($issue, $appUser, $timeNote);
+                return $this->json($data, Response::HTTP_OK);
+            }
+
+            return $this->json('Can\'t delete TimeNote of another person', Response::HTTP_UNAUTHORIZED);
+
+        } catch (\Exception $e) {
+            return $this->json($e->getMessage(), Response::HTTP_BAD_REQUEST);
+        }
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Glquery\GlIssue;
+use App\Entity\Glquery\GlTimeNote;
 use App\Entity\Main\AppUser;
 use App\Entity\Main\AppUserInstance;
 use App\Entity\Main\Instance;
@@ -33,7 +34,6 @@ class GitlabService
 
     public function status(Instance $instance, AppUser $user): bool
     {
-
         if ($appInstance = $this->service->getAppUserInstance($instance, $user)) {
             try {
                 $response = $this->client->request(
@@ -54,7 +54,6 @@ class GitlabService
 
     public function getUserData(Instance $instance, AppUser $user)
     {
-
         if ($appInstance = $this->service->getAppUserInstance($instance, $user)) {
 
             try {
@@ -99,6 +98,50 @@ class GitlabService
         throw new \LogicException('Invalid Token', Response::HTTP_UNAUTHORIZED);
     }
 
+    public function putTimeNote(GlIssue $issue, AppUser $user, TimeNote $timeNote, GlTimeNote $glTimeNote)
+    {
+        if ($appInstance = $this->service->getAppUserInstanceByIssue($issue, $user)) {
+            try {
+                //remove spent time
+                $auxTimeNote = new TimeNote();
+                $auxTimeNote->setTimeSeconds($glTimeNote->getComputed());
+                $auxTimeNote->setDate($glTimeNote->getSpentAt());
+                $this->postNote($issue, $appInstance, $this->timeNoteToGitlabNote($auxTimeNote, true));
+
+                //add new spent time
+                $result = $this->postNote($issue, $appInstance, $this->timeNoteToGitlabNote($timeNote));
+
+                if ($timeNote->getBody()) {
+                    $this->postNote($issue, $appInstance, $timeNote->getBody());
+                }
+
+                return $result;
+
+            } catch (\Exception $e) {
+                throw new \LogicException('Invalid Request', Response::HTTP_BAD_REQUEST);
+            }
+        }
+
+        throw new \LogicException('Invalid Token', Response::HTTP_UNAUTHORIZED);
+    }
+
+    public function deleteTimeNote(GlIssue $issue, AppUser $user, GlTimeNote $glTimeNote)
+    {
+        if ($appInstance = $this->service->getAppUserInstanceByIssue($issue, $user)) {
+            try {
+                $auxTimeNote = new TimeNote();
+                $auxTimeNote->setTimeSeconds($glTimeNote->getComputed());
+                $auxTimeNote->setDate($glTimeNote->getSpentAt());
+
+                return $this->postNote($issue, $appInstance, $this->timeNoteToGitlabNote($auxTimeNote, true));
+            }  catch (\Exception $e) {
+                throw new \LogicException('Invalid Request', Response::HTTP_BAD_REQUEST);
+            }
+        }
+
+        throw new \LogicException('Invalid Token', Response::HTTP_UNAUTHORIZED);
+    }
+
     private function postNote(GlIssue $issue, AppUserInstance $appInstance, string $body)
     {
         $response = $this->client->request(
@@ -113,16 +156,20 @@ class GitlabService
         if (in_array($response->getStatusCode(), self::VALID_RESPONSE_CODES)) {
             return json_decode($response->getContent());
         } else {
-            throw new \Exception();
+            throw new \LogicException('Invalid Request', Response::HTTP_BAD_REQUEST);
         }
     }
 
-    private function timeNoteToGitlabNote(TimeNote $timeNote) :string
+    private function timeNoteToGitlabNote(TimeNote $timeNote, bool $remove = false) :string
     {
         $time = $timeNote->getTimeSeconds() / 3600;
         $date = '';
-        if (!is_null($timeNote->getDate())) {
+        if (!empty($timeNote->getDate())) {
             $date = $timeNote->getDate()->format('Y-m-d');
+        }
+
+        if ($remove) {
+            return "/spend -{$time}h {$date}";
         }
 
         return "/spend {$time}h {$date}";
